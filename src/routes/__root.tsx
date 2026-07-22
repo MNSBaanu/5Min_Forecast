@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppSidebar } from "@/components/app-sidebar";
 import { RoleSwitcher } from "@/components/role-switcher";
+import { AuthMenu } from "@/components/auth-menu";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
@@ -130,6 +131,8 @@ function RootComponent() {
               <SidebarTrigger />
               <Separator orientation="vertical" className="h-6" />
               <div className="flex-1" />
+              <AuthMenu />
+              <Separator orientation="vertical" className="h-6" />
               <RoleSwitcher />
             </header>
             <Outlet />
