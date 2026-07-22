@@ -1,6 +1,6 @@
-# Welcome to your Lovable project
+# 5Min Forecast
 
-This project was built with [Lovable](https://lovable.dev).
+A lightweight CRM for small sales teams — move off scattered spreadsheets and get a clear monthly forecast in minutes.
 
 ## Build with Lovable
 
