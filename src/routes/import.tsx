@@ -297,7 +297,11 @@ function ImportPage() {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
-              <CardTitle>Review deals</CardTitle>
+              <CardTitle>
+                <h2 id="import-preview-heading" className="text-base font-semibold leading-none">
+                  Review deals
+                </h2>
+              </CardTitle>
               <CardDescription>
                 Showing the first {Math.min(rows.length, 25)} of {rows.length} rows. Confirm to import all.
               </CardDescription>
