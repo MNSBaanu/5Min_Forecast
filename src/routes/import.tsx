@@ -187,8 +187,10 @@ function ImportPage() {
       {step === "upload" && (
         <Card aria-labelledby="import-upload-heading">
           <CardHeader>
-            <CardTitle asChild>
-              <h2 id="import-upload-heading">Upload your CSV</h2>
+            <CardTitle>
+              <h2 id="import-upload-heading" className="text-base font-semibold leading-none">
+                Upload your CSV
+              </h2>
             </CardTitle>
             <CardDescription>
               Drop a .csv export from your spreadsheet. First row should contain column headers.
@@ -239,8 +241,10 @@ function ImportPage() {
         <Card aria-labelledby="import-map-heading">
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
-              <CardTitle asChild>
-                <h2 id="import-map-heading">Map your columns</h2>
+              <CardTitle>
+                <h2 id="import-map-heading" className="text-base font-semibold leading-none">
+                  Map your columns
+                </h2>
               </CardTitle>
               <CardDescription>
                 Match each CRM field to a column from your file. Leave optional fields unmapped.
