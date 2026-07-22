@@ -11,6 +11,11 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AppSidebar } from "@/components/app-sidebar";
+import { RoleSwitcher } from "@/components/role-switcher";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { CurrentUserProvider } from "@/hooks/use-current-user";
 
 function NotFoundComponent() {
   return (
@@ -119,8 +124,20 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <CurrentUserProvider>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex-1" />
+              <RoleSwitcher />
+            </header>
+            <Outlet />
+          </SidebarInset>
+        </SidebarProvider>
+      </CurrentUserProvider>
     </QueryClientProvider>
   );
 }

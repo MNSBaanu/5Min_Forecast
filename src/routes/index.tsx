@@ -1,24 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { PagePlaceholder } from "@/components/page-placeholder";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Pipeline — Five Minute Forecast" },
+      { name: "description", content: "Drag deals through your sales pipeline and keep every stage current in minutes." },
+      { property: "og:title", content: "Pipeline — Five Minute Forecast" },
+      { property: "og:description", content: "Drag deals through your sales pipeline and keep every stage current in minutes." },
+    ],
+  }),
+  component: PipelinePage,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function PipelinePage() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <PagePlaceholder
+      title="Pipeline"
+      description="Kanban board of open deals grouped by stage. Reps update their own deals daily."
+    />
   );
 }
