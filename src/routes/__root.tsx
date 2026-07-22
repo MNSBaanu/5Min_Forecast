@@ -15,6 +15,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { RoleSwitcher } from "@/components/role-switcher";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/sonner";
 import { CurrentUserProvider } from "@/hooks/use-current-user";
 
 function NotFoundComponent() {
@@ -137,6 +138,7 @@ function RootComponent() {
             <Outlet />
           </SidebarInset>
         </SidebarProvider>
+        <Toaster />
       </CurrentUserProvider>
     </QueryClientProvider>
   );
