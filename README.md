@@ -1,29 +1,66 @@
 # 5Min Forecast
 
-A lightweight CRM for small sales teams — move off scattered spreadsheets and get a clear monthly forecast in minutes.
+A lightweight CRM for small sales teams. Reps keep their own deals current each day, while the sales manager gets a clear monthly forecast in minutes — no more scattered spreadsheets.
 
-## Build with Lovable
+## Features
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+- **Pipeline board** — track deals through every stage at a glance.
+- **Analytics dashboard** — see forecasted revenue and team performance quickly.
+- **Contacts table** — keep company and contact details in one place.
+- **CSV import** — bring existing spreadsheet deals into the CRM in a few clicks.
+- **Manager settings** — configure forecast periods, stages, and team defaults.
+- **Role switcher** — toggle between Sales Rep and Sales Manager views for testing and demos.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Tech Stack
 
-## Development
+- [TanStack Start](https://tanstack.com/start) — full-stack React framework
+- [React](https://react.dev) — UI library
+- [TypeScript](https://www.typescriptlang.org) — type-safe development
+- [Tailwind CSS](https://tailwindcss.com) — styling
+- [shadcn/ui](https://ui.shadcn.com) — accessible UI components
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Getting Started
+
+### Prerequisites
+
+- Node.js (LTS recommended)
+- npm, yarn, pnpm, or bun
+
+### Install
 
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
+npm install
+```
+
+### Run locally
+
+```sh
 npm run dev
 ```
 
-## Built with
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Project Structure
+
+```
+src/
+  components/     # Reusable UI components
+  hooks/          # Custom React hooks and providers
+  lib/            # Utilities and helpers
+  routes/         # TanStack Start file-based routes
+  styles.css      # Global styles and theme tokens
+```
+
+## Scripts
+
+| Command         | Description                  |
+|-----------------|------------------------------|
+| `npm run dev`   | Start the development server |
+| `npm run build` | Build for production         |
+| `npm run start` | Start the production server  |
+
+## License
+
+[MIT](LICENSE)
