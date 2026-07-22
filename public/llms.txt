@@ -1,0 +1,11 @@
+# Five Minute Forecast
+
+> A lightweight CRM for small sales teams. Reps keep deals current daily and managers get a clear monthly forecast in minutes.
+
+## Pages
+
+- [Pipeline](/): Kanban board of open deals grouped by stage.
+- [Analytics](/analytics): Monthly forecast, win rates, and pipeline health.
+- [Contacts](/contacts): Table of people and companies linked to deals.
+- [CSV Import](/import): Guided upload and column mapping for spreadsheet deals.
+- [Manager Settings](/settings): Team, pipeline stages, and forecast targets.
