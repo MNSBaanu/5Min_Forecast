@@ -83,14 +83,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Pipeline — Five Minute Forecast" },
+      { name: "description", content: "Drag deals through your sales pipeline and keep every stage current in minutes." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Pipeline — Five Minute Forecast" },
+      { property: "og:description", content: "Drag deals through your sales pipeline and keep every stage current in minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Pipeline — Five Minute Forecast" },
+      { name: "twitter:description", content: "Drag deals through your sales pipeline and keep every stage current in minutes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4c4948de-f7e4-41a5-a356-8a5d221e56cb/id-preview-ad8f1576--cc076d1c-1c2b-44d7-a379-b70482f11de4.lovable.app-1784740463797.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4c4948de-f7e4-41a5-a356-8a5d221e56cb/id-preview-ad8f1576--cc076d1c-1c2b-44d7-a379-b70482f11de4.lovable.app-1784740463797.png" },
     ],
     links: [
       {
