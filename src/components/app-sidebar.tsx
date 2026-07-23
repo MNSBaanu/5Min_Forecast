@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Kanban, Settings, Upload, Users, TrendingUp } from "lucide-react";
+import { BarChart3, Kanban, Settings, Upload, Users } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import logoAsset from "@/assets/logo.png.asset.json";
+
 
 import {
   Sidebar,
@@ -34,9 +36,11 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border/60">
         <div className="flex items-center gap-3 px-2 py-3">
-          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-sidebar-primary-foreground shadow-glow">
-            <TrendingUp className="h-4 w-4" strokeWidth={2.5} />
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="5Min Forecast"
+            className="h-9 w-9 shrink-0 rounded-xl object-cover shadow-glow"
+          />
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="font-display text-base font-semibold tracking-tight text-sidebar-foreground">
@@ -49,6 +53,7 @@ export function AppSidebar() {
           )}
         </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/50">

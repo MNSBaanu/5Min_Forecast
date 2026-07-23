@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, ShieldCheck, Sparkles, LineChart } from "lucide-react";
+import { ShieldCheck, Sparkles, LineChart } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/logo.png.asset.json";
+
 
 const NEXT_KEY = "fmf.auth.next";
 
@@ -120,9 +122,11 @@ function AuthPage() {
           }}
         />
         <div className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-gold text-sidebar-primary-foreground shadow-glow">
-            <TrendingUp className="h-5 w-5" strokeWidth={2.5} />
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="5Min Forecast"
+            className="h-10 w-10 rounded-xl object-cover shadow-glow"
+          />
           <div className="leading-tight">
             <p className="font-display text-lg font-semibold tracking-tight">5Min Forecast</p>
             <p className="text-[11px] uppercase tracking-[0.18em] text-sidebar-foreground/60">
@@ -130,6 +134,7 @@ function AuthPage() {
             </p>
           </div>
         </div>
+
 
         <div className="relative max-w-md">
           <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight">
@@ -165,13 +170,16 @@ function AuthPage() {
       <section className="flex items-center justify-center px-6 py-12 sm:px-10">
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-glow">
-              <TrendingUp className="h-5 w-5" strokeWidth={2.5} />
-            </div>
+            <img
+              src={logoAsset.url}
+              alt="5Min Forecast"
+              className="h-10 w-10 rounded-xl object-cover shadow-glow"
+            />
             <p className="font-display text-lg font-semibold tracking-tight text-foreground">
               5Min Forecast
             </p>
           </div>
+
 
           <div className="mb-8">
             <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">
