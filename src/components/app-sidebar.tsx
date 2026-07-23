@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Kanban, Settings, Upload, Users, TrendingUp } from "lucide-react";
+import { BarChart3, Kanban, Settings, Upload, Users } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import logoAsset from "@/assets/logo.png.asset.json";
+
 
 import {
   Sidebar,
