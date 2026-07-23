@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Building2, CalendarDays, MessageSquare, TrendingUp, Wallet } from "lucide-react";
+import { AlertTriangle, Building2, CalendarDays, LineChart, MessageSquare, TrendingUp, Upload, Wallet } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { EmptyState } from "@/components/empty-state";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -119,6 +121,32 @@ function AnalyticsPage() {
     monthFilter === "all"
       ? "all months"
       : monthFmt.format(new Date(`${monthFilter}-01T00:00:00Z`));
+
+  if (deals.length === 0) {
+    return (
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Analytics</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Forecast the month in under five minutes. Metrics appear here once your team is tracking deals.
+          </p>
+        </div>
+        <EmptyState
+          icon={<LineChart className="h-6 w-6" />}
+          title="No metrics to show just yet"
+          description="Your open pipeline, weighted forecast, stale-deal alerts, and AI summary will light up as soon as active deals are added. Import a spreadsheet to get the first numbers on the board."
+          actions={
+            <Button asChild>
+              <Link to="/import">
+                <Upload className="mr-2 h-4 w-4" />
+                Start CSV import
+              </Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
