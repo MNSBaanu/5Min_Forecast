@@ -177,6 +177,9 @@ function LandingPage() {
                   alt="5Min Forecast pipeline board showing deals organized into sales stages"
                   className="w-full"
                   loading="eager"
+                  fetchPriority="high"
+                  width={1600}
+                  height={1000}
                 />
               </div>
             </Reveal>
