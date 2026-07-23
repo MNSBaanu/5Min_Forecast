@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { BarChart3, Kanban, Settings, Upload, Users, TrendingUp } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 import {
   Sidebar,
@@ -19,13 +20,15 @@ const items = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Contacts", url: "/contacts", icon: Users },
   { title: "CSV Import", url: "/import", icon: Upload },
-  { title: "Manager Settings", url: "/settings", icon: Settings },
+  { title: "Manager Settings", url: "/settings", icon: Settings, managerOnly: true },
 ] as const;
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const { isManager } = useCurrentUser();
+  const visible = items.filter((i) => !("managerOnly" in i && i.managerOnly) || isManager);
 
   return (
     <Sidebar collapsible="icon">
@@ -49,7 +52,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
+              {visible.map((item) => {
                 const active =
                   item.url === "/" ? pathname === "/" : pathname.startsWith(item.url);
                 return (
