@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
 export type StageId =
   | "lead"
@@ -103,8 +104,10 @@ function mapDealRow(row: DealRow, notes: Note[] = []): Deal {
   };
 }
 
-function patchToDbUpdate(patch: Partial<Deal>): Record<string, unknown> {
-  const u: Record<string, unknown> = {};
+type DealUpdate = Database["public"]["Tables"]["deals"]["Update"];
+
+function patchToDbUpdate(patch: Partial<Deal>): DealUpdate {
+  const u: DealUpdate = {};
   if (patch.company !== undefined) u.company_name = patch.company;
   if (patch.contact !== undefined) u.contact_name = patch.contact;
   if (patch.value !== undefined) u.value = patch.value;
