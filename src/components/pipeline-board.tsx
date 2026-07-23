@@ -179,6 +179,7 @@ export function PipelineBoard() {
               key={stage.id}
               stage={stage}
               deals={dealsByStage[stage.id]}
+              onOpen={setSelectedId}
             />
           ))}
         </div>
@@ -247,9 +248,11 @@ export function PipelineBoard() {
 function StageColumn({
   stage,
   deals,
+  onOpen,
 }: {
   stage: { id: StageId; label: string; accent: string };
   deals: Deal[];
+  onOpen: (id: string) => void;
 }) {
   const { isOver, setNodeRef } = useDroppable({ id: stage.id });
   const total = deals.reduce((sum, d) => sum + d.value, 0);
