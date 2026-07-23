@@ -495,10 +495,44 @@ function ImportPage() {
             <FileChip name={fileName} rows={rows.length} onClear={reset} />
           </CardHeader>
           <CardContent className="space-y-4">
+            {rowIssues.length > 0 && (
+              <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="flex-1 space-y-2">
+                    <div className="text-sm font-medium text-foreground">
+                      {rowIssues.length} row{rowIssues.length === 1 ? "" : "s"} need attention
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        {validCount} valid · {rowIssues.length} invalid
+                      </span>
+                    </div>
+                    <ul className="max-h-40 space-y-1 overflow-y-auto text-xs text-muted-foreground">
+                      {rowIssues.slice(0, 50).map((e) => (
+                        <li key={e.row}>
+                          <span className="font-medium text-foreground">Row {e.row}:</span>{" "}
+                          {e.issues.join(" · ")}
+                        </li>
+                      ))}
+                      {rowIssues.length > 50 && (
+                        <li className="italic">…and {rowIssues.length - 50} more</li>
+                      )}
+                    </ul>
+                    <label className="flex items-center gap-2 pt-1 text-xs text-foreground">
+                      <Checkbox
+                        checked={skipInvalid}
+                        onCheckedChange={(v) => setSkipInvalid(v === true)}
+                      />
+                      Skip invalid rows and import the {validCount} valid one{validCount === 1 ? "" : "s"}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="overflow-hidden rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-16">Row</TableHead>
                     {FIELDS.map((f) => (
                       <TableHead key={f.key}>
                         <div className="flex items-center gap-2">
@@ -513,7 +547,15 @@ function ImportPage() {
                 </TableHeader>
                 <TableBody>
                   {previewRows.map((r, i) => (
-                    <TableRow key={i}>
+                    <TableRow key={i} className={cn(invalidRowNumbers.has(i + 2) && "bg-amber-500/5")}>
+                      <TableCell className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          {i + 2}
+                          {invalidRowNumbers.has(i + 2) && (
+                            <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                          )}
+                        </div>
+                      </TableCell>
                       {FIELDS.map((f) => (
                         <TableCell key={f.key} className="max-w-[220px] truncate">
                           {r[f.key] || <span className="text-muted-foreground">—</span>}
@@ -523,7 +565,7 @@ function ImportPage() {
                   ))}
                   {previewRows.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={FIELDS.length} className="py-6 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={FIELDS.length + 1} className="py-6 text-center text-sm text-muted-foreground">
                         No rows to preview.
                       </TableCell>
                     </TableRow>
@@ -536,9 +578,18 @@ function ImportPage() {
                 <ArrowLeft className="mr-1 h-4 w-4" />
                 Back to mapping
               </Button>
-              <Button onClick={confirmImport} disabled={importing}>
+              <Button
+                onClick={confirmImport}
+                disabled={
+                  importing ||
+                  validCount === 0 ||
+                  (rowIssues.length > 0 && !skipInvalid)
+                }
+              >
                 <CheckCircle2 className="mr-1 h-4 w-4" />
-                {importing ? "Importing…" : `Confirm import (${rows.length})`}
+                {importing
+                  ? "Importing…"
+                  : `Confirm import (${validCount})`}
               </Button>
             </div>
           </CardContent>
