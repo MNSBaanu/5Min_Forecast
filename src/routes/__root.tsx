@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 import { CurrentUserProvider } from "@/hooks/use-current-user";
 import { DealsProvider } from "@/hooks/use-deals";
+import { ContactsProvider } from "@/hooks/use-contacts";
 
 function NotFoundComponent() {
   return (
@@ -125,6 +126,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CurrentUserProvider>
+        <ContactsProvider>
         <DealsProvider>
         <SidebarProvider>
           <AppSidebar />
@@ -141,6 +143,7 @@ function RootComponent() {
           </SidebarInset>
         </SidebarProvider>
         </DealsProvider>
+        </ContactsProvider>
         <Toaster />
       </CurrentUserProvider>
     </QueryClientProvider>
