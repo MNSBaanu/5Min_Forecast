@@ -10,7 +10,9 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { Building2, CalendarDays, User, Send } from "lucide-react";
+import { Building2, CalendarDays, User, Send, Rocket, Upload, Plus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { EmptyState } from "@/components/empty-state";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -80,6 +82,30 @@ export function PipelineBoard() {
           <div key={stage.id} className="min-h-[420px] rounded-lg border bg-card/40 p-3" />
         ))}
       </div>
+    );
+  }
+
+  if (deals.length === 0) {
+    return (
+      <EmptyState
+        icon={<Rocket className="h-6 w-6" />}
+        title="Your pipeline is ready — let's add your first deals"
+        description="Import an existing spreadsheet of opportunities in seconds, or create a deal by hand to start tracking your team's forecast."
+        actions={
+          <>
+            <Button asChild>
+              <Link to="/import">
+                <Upload className="mr-2 h-4 w-4" />
+                Start CSV import
+              </Link>
+            </Button>
+            <Button variant="outline" onClick={() => setSelectedId("__new__")}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add a deal manually
+            </Button>
+          </>
+        }
+      />
     );
   }
 
