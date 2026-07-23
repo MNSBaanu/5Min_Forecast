@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Building2, Mail, Phone, Globe, Plus } from "lucide-react";
+import { Building2, Mail, Phone, Globe, Plus, Users, Briefcase } from "lucide-react";
+import { EmptyState } from "@/components/empty-state";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,8 +96,25 @@ function ContactsPage() {
                   ))}
                   {contacts.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
-                        No contacts yet.
+                      <TableCell colSpan={4} className="p-6">
+                        <EmptyState
+                          className="border-none bg-transparent py-6"
+                          icon={<Users className="h-6 w-6" />}
+                          title="Add your first contact"
+                          description="Keep every prospect and customer in one shared directory so the whole team can link them to deals."
+                          actions={
+                            <AddContactDialog
+                              companies={companies}
+                              onAdd={addContact}
+                              trigger={
+                                <Button>
+                                  <Plus className="mr-2 h-4 w-4" />
+                                  Add your first contact
+                                </Button>
+                              }
+                            />
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -138,8 +156,24 @@ function ContactsPage() {
                   ))}
                   {companies.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={3} className="py-8 text-center text-sm text-muted-foreground">
-                        No companies yet.
+                      <TableCell colSpan={3} className="p-6">
+                        <EmptyState
+                          className="border-none bg-transparent py-6"
+                          icon={<Briefcase className="h-6 w-6" />}
+                          title="Add your first company"
+                          description="Track every account your team is working with. You can link contacts and deals to companies as your pipeline grows."
+                          actions={
+                            <AddCompanyDialog
+                              onAdd={addCompany}
+                              trigger={
+                                <Button>
+                                  <Plus className="mr-2 h-4 w-4" />
+                                  Add your first company
+                                </Button>
+                              }
+                            />
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -216,9 +250,11 @@ function ContactsPage() {
 function AddContactDialog({
   companies,
   onAdd,
+  trigger,
 }: {
   companies: Company[];
   onAdd: (input: { name: string; email: string; phone: string; companyName: string }) => Promise<Contact | null>;
+  trigger?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -246,7 +282,9 @@ function AddContactDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm"><Plus className="h-4 w-4" /> Add contact</Button>
+        {trigger ?? (
+          <Button size="sm"><Plus className="h-4 w-4" /> Add contact</Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -291,8 +329,10 @@ function AddContactDialog({
 
 function AddCompanyDialog({
   onAdd,
+  trigger,
 }: {
   onAdd: (input: { name: string; industry: string; website: string }) => Promise<Company | null>;
+  trigger?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -314,7 +354,9 @@ function AddCompanyDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm"><Plus className="h-4 w-4" /> Add company</Button>
+        {trigger ?? (
+          <Button size="sm"><Plus className="h-4 w-4" /> Add company</Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
