@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -122,24 +123,30 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isPublicChromeless = pathname.startsWith("/auth");
 
   return (
     <QueryClientProvider client={queryClient}>
       <CurrentUserProvider>
         <ContactsProvider>
         <DealsProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
-              <SidebarTrigger />
-              <Separator orientation="vertical" className="h-6" />
-              <div className="flex-1" />
-              <AuthMenu />
-            </header>
-            <Outlet />
-          </SidebarInset>
-        </SidebarProvider>
+        {isPublicChromeless ? (
+          <Outlet />
+        ) : (
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="h-6" />
+                <div className="flex-1" />
+                <AuthMenu />
+              </header>
+              <Outlet />
+            </SidebarInset>
+          </SidebarProvider>
+        )}
         </DealsProvider>
         </ContactsProvider>
         <Toaster />
