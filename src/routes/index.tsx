@@ -166,6 +166,11 @@ function LandingPage() {
                   className="w-full"
                   loading="eager"
                 />
+                <LogoBadge className="absolute left-5 top-5" />
+                <DoodleCircle className="pointer-events-none absolute -right-8 top-16 hidden h-40 w-52 text-primary/70 md:block" />
+                <span className="pointer-events-none absolute right-4 top-4 hidden font-handwriting text-xl text-primary/80 md:block">
+                  drag me →
+                </span>
               </div>
             </Reveal>
           </div>
