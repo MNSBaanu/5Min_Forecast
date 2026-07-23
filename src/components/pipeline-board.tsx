@@ -7,10 +7,18 @@ import {
   useDroppable,
   useSensor,
   useSensors,
+  defaultDropAnimationSideEffects,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { Building2, CalendarDays, User, Send, Rocket, Upload } from "lucide-react";
+import { CSS } from "@dnd-kit/utilities";
+import { AlertTriangle, Building2, CalendarDays, User, Send, Rocket, Upload } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "@tanstack/react-router";
 import { EmptyState } from "@/components/empty-state";
 
@@ -52,6 +60,25 @@ const STAGES = STAGE_META;
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 const dateTimeFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+
+const STALE_DAYS = 14;
+
+function daysSince(iso: string): number {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return 0;
+  return Math.floor((Date.now() - then) / 86_400_000);
+}
+
+function isStale(deal: Deal): boolean {
+  if (deal.stage === "closed_won" || deal.stage === "closed_lost") return false;
+  const notes = deal.notes ?? [];
+  const lastNote = notes.reduce<string | null>(
+    (acc, n) => (!acc || new Date(n.createdAt) > new Date(acc) ? n.createdAt : acc),
+    null,
+  );
+  const latest = lastNote && new Date(lastNote) > new Date(deal.updatedAt) ? lastNote : deal.updatedAt;
+  return daysSince(latest) > STALE_DAYS;
+}
 
 export function PipelineBoard() {
   const { deals, updateDeal, addNote } = useDeals();
