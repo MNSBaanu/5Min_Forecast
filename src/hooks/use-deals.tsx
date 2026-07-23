@@ -236,10 +236,12 @@ export function DealsProvider({ children }: { children: ReactNode }) {
         ];
       });
       void (async () => {
+        const { data: userRes } = await supabase.auth.getUser();
         const { error } = await supabase.from("deal_notes").insert({
           deal_id: id,
           author_name: note.author,
           body: note.body,
+          author_user_id: userRes.user?.id ?? null,
         });
         if (error) {
           toast.error("Failed to save note", { description: error.message });
