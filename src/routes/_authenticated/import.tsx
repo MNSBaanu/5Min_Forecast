@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, FileSpreadsheet, Upload, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, FileSpreadsheet, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { STAGE_META, type StageId } from "@/hooks/use-deals";
@@ -125,11 +126,53 @@ function parseValue(raw: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+function isValidValue(raw: string): boolean {
+  if (!raw.trim()) return false;
+  const cleaned = raw.replace(/[^0-9.\-]/g, "");
+  if (!cleaned) return false;
+  const n = Number(cleaned);
+  return Number.isFinite(n) && n >= 0;
+}
+
+function isKnownStage(raw: string): boolean {
+  const s = raw.toLowerCase().replace(/[^a-z]/g, "");
+  if (!s) return false;
+  if (["won", "lost", "negot", "propos", "qual", "lead", "new"].some((k) => s.includes(k))) return true;
+  return STAGE_META.some(
+    (m) => m.id.replace(/_/g, "") === s || m.label.toLowerCase().replace(/\s/g, "") === s,
+  );
+}
+
 function parseDate(raw: string): string | null {
   if (!raw) return null;
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().slice(0, 10);
+}
+
+type RowError = { row: number; issues: string[] };
+
+function validateRecord(
+  rec: Record<FieldKey, string>,
+  mapping: Mapping,
+): string[] {
+  const issues: string[] = [];
+  if (!rec.company.trim() && !rec.contact.trim()) {
+    issues.push("Missing company and contact — need at least one");
+  }
+  if (mapping.value !== IGNORE && rec.value.trim() && !isValidValue(rec.value)) {
+    issues.push(`Invalid deal value "${rec.value}"`);
+  }
+  if (mapping.closeDate !== IGNORE && rec.closeDate.trim() && !parseDate(rec.closeDate)) {
+    issues.push(`Invalid close date "${rec.closeDate}"`);
+  }
+  if (mapping.stage !== IGNORE && rec.stage.trim() && !isKnownStage(rec.stage)) {
+    issues.push(`Unknown stage "${rec.stage}"`);
+  }
+  if (mapping.owner !== IGNORE && !rec.owner.trim()) {
+    issues.push("Missing owner");
+  }
+  return issues;
 }
 
 function ImportPage() {
@@ -142,6 +185,7 @@ function ImportPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [skipInvalid, setSkipInvalid] = useState(true);
 
   const handleFile = async (file: File) => {
     if (!file.name.toLowerCase().endsWith(".csv")) {
@@ -157,6 +201,10 @@ function ImportPage() {
       const parsed = parseCsv(text);
       if (parsed.headers.length === 0) {
         toast.error("This CSV appears to be empty");
+        return;
+      }
+      if (parsed.rows.length === 0) {
+        toast.error("This CSV has headers but no data rows");
         return;
       }
       setFileName(file.name);
@@ -183,8 +231,8 @@ function ImportPage() {
     [mapping],
   );
 
-  const previewRows = useMemo(() => {
-    return rows.slice(0, 25).map((r) => {
+  const normalizedRows = useMemo(() => {
+    return rows.map((r) => {
       const record: Record<FieldKey, string> = {
         company: "", contact: "", value: "", stage: "", closeDate: "", owner: "",
       };
@@ -198,30 +246,36 @@ function ImportPage() {
     });
   }, [rows, mapping, headers]);
 
+  const rowIssues = useMemo<RowError[]>(() => {
+    const out: RowError[] = [];
+    normalizedRows.forEach((rec, i) => {
+      const issues = validateRecord(rec, mapping);
+      if (issues.length > 0) out.push({ row: i + 2, issues }); // +2: header + 1-index
+    });
+    return out;
+  }, [normalizedRows, mapping]);
+
+  const invalidRowNumbers = useMemo(() => new Set(rowIssues.map((e) => e.row)), [rowIssues]);
+  const validCount = normalizedRows.length - rowIssues.length;
+  const previewRows = normalizedRows.slice(0, 25);
+
   const confirmImport = async () => {
     const { data: userRes } = await supabase.auth.getUser();
     if (!userRes.user) {
       toast.error("Please sign in to import deals");
       return;
     }
+    if (!skipInvalid && rowIssues.length > 0) {
+      toast.error("Fix errors or enable 'Skip invalid rows' to continue");
+      return;
+    }
     setImporting(true);
     try {
-      // Build normalized rows from full dataset
-      const normalized = rows.map((r) => {
-        const rec: Record<FieldKey, string> = {
-          company: "", contact: "", value: "", stage: "", closeDate: "", owner: "",
-        };
-        for (const field of FIELDS) {
-          const header = mapping[field.key];
-          if (header === IGNORE) continue;
-          const idx = headers.indexOf(header);
-          if (idx >= 0) rec[field.key] = (r[idx] ?? "").trim();
-        }
-        return rec;
-      }).filter((r) => r.company || r.contact);
+      // Filter to valid rows only (invalidRowNumbers are 1-indexed with +2 offset)
+      const normalized = normalizedRows.filter((_, i) => !invalidRowNumbers.has(i + 2));
 
       if (normalized.length === 0) {
-        toast.error("No importable rows — map at least Company or Contact");
+        toast.error("No valid rows to import");
         setImporting(false);
         return;
       }
@@ -231,10 +285,14 @@ function ImportPage() {
       const uniqueCompanyNames = Array.from(
         new Set(normalized.map((r) => r.company).filter(Boolean)),
       );
+      let companiesCreated = 0;
       for (const name of uniqueCompanyNames) {
         if (!companyByName.has(name.toLowerCase())) {
           const co = await addCompany({ name, industry: "", website: "" });
-          if (co) companyByName.set(co.name.toLowerCase(), co);
+          if (co) {
+            companyByName.set(co.name.toLowerCase(), co);
+            companiesCreated++;
+          }
         }
       }
 
@@ -250,9 +308,13 @@ function ImportPage() {
           uniqueContacts.set(key, { name: r.contact, company: r.company });
         }
       }
+      let contactsCreated = 0;
       for (const { name, company } of uniqueContacts.values()) {
         const c = await addContact({ name, email: "", phone: "", companyName: company });
-        if (c) contactByKey.set(`${c.name.toLowerCase()}|${(c.company ?? "").toLowerCase()}`, c);
+        if (c) {
+          contactByKey.set(`${c.name.toLowerCase()}|${(c.company ?? "").toLowerCase()}`, c);
+          contactsCreated++;
+        }
       }
 
       // Insert deals
@@ -280,7 +342,17 @@ function ImportPage() {
         setImporting(false);
         return;
       }
-      toast.success(`Imported ${dealRows.length} deal${dealRows.length === 1 ? "" : "s"}`);
+      const skipped = rowIssues.length;
+      const parts = [
+        `${dealRows.length} deal${dealRows.length === 1 ? "" : "s"}`,
+        `${contactsCreated} contact${contactsCreated === 1 ? "" : "s"}`,
+        `${companiesCreated} compan${companiesCreated === 1 ? "y" : "ies"}`,
+      ];
+      toast.success("Import complete", {
+        description:
+          `Added ${parts.join(", ")}.` +
+          (skipped > 0 ? ` Skipped ${skipped} invalid row${skipped === 1 ? "" : "s"}.` : ""),
+      });
       reset();
     } finally {
       setImporting(false);
