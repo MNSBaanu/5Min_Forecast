@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, ShieldCheck, Sparkles, LineChart } from "lucide-react";
+import { ShieldCheck, Sparkles, LineChart } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/logo.png.asset.json";
+
 
 const NEXT_KEY = "fmf.auth.next";
 
