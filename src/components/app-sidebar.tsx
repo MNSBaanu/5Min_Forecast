@@ -63,7 +63,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {visible.map((item) => {
                 const active =
-                  item.url === "/" ? pathname === "/" : pathname.startsWith(item.url);
+                  item.url === "/pipeline" ? pathname === "/pipeline" : pathname.startsWith(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
