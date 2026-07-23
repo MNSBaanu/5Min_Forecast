@@ -41,63 +41,17 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useDeals, STAGE_META, OWNERS, type Deal, type Note, type StageId } from "@/hooks/use-deals";
 import { cn } from "@/lib/utils";
 
-type StageId =
-  | "lead"
-  | "qualified"
-  | "proposal"
-  | "negotiation"
-  | "closed_won"
-  | "closed_lost";
-
-type Note = {
-  id: string;
-  author: string;
-  createdAt: string; // ISO
-  body: string;
-};
-
-type Deal = {
-  id: string;
-  company: string;
-  contact: string;
-  value: number;
-  closeDate: string; // ISO
-  owner: string;
-  stage: StageId;
-  lossReason?: string;
-  notes?: Note[];
-};
-
-const STAGES: { id: StageId; label: string; accent: string }[] = [
-  { id: "lead", label: "Lead", accent: "bg-slate-500" },
-  { id: "qualified", label: "Qualified", accent: "bg-blue-500" },
-  { id: "proposal", label: "Proposal", accent: "bg-indigo-500" },
-  { id: "negotiation", label: "Negotiation", accent: "bg-amber-500" },
-  { id: "closed_won", label: "Closed Won", accent: "bg-emerald-500" },
-  { id: "closed_lost", label: "Closed Lost", accent: "bg-rose-500" },
-];
-
-const INITIAL_DEALS: Deal[] = [
-  { id: "d1", company: "Acme Corp", contact: "Jane Cooper", value: 12000, closeDate: "2026-08-15", owner: "Alex Morgan", stage: "lead" },
-  { id: "d2", company: "Globex", contact: "Wade Warren", value: 45000, closeDate: "2026-08-22", owner: "Priya Shah", stage: "lead" },
-  { id: "d3", company: "Initech", contact: "Esther Howard", value: 8000, closeDate: "2026-08-05", owner: "Alex Morgan", stage: "qualified" },
-  { id: "d4", company: "Umbrella", contact: "Cameron W.", value: 32000, closeDate: "2026-09-01", owner: "Diego Ruiz", stage: "qualified" },
-  { id: "d5", company: "Stark Industries", contact: "Robert D.", value: 92000, closeDate: "2026-08-30", owner: "Priya Shah", stage: "proposal" },
-  { id: "d6", company: "Wayne Enterprises", contact: "Bruce W.", value: 128000, closeDate: "2026-09-10", owner: "Alex Morgan", stage: "negotiation" },
-  { id: "d7", company: "Hooli", contact: "Gavin B.", value: 54000, closeDate: "2026-07-30", owner: "Diego Ruiz", stage: "closed_won" },
-  { id: "d8", company: "Pied Piper", contact: "Richard H.", value: 15000, closeDate: "2026-07-18", owner: "Priya Shah", stage: "closed_lost", lossReason: "Chose competitor" },
-];
+const STAGES = STAGE_META;
 
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 const dateTimeFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 
-const OWNERS = ["Alex Morgan", "Priya Shah", "Diego Ruiz", "Sam Chen"];
-
 export function PipelineBoard() {
-  const [deals, setDeals] = useState<Deal[]>(INITIAL_DEALS);
+  const { deals, updateDeal, addNote } = useDeals();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pendingLoss, setPendingLoss] = useState<{ dealId: string } | null>(null);
   const [lossReason, setLossReason] = useState("");
@@ -117,16 +71,6 @@ export function PipelineBoard() {
 
   const activeDeal = activeId ? deals.find((d) => d.id === activeId) ?? null : null;
   const selectedDeal = selectedId ? deals.find((d) => d.id === selectedId) ?? null : null;
-
-  function updateDeal(id: string, patch: Partial<Deal>) {
-    setDeals((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
-  }
-
-  function addNote(id: string, note: Note) {
-    setDeals((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, notes: [note, ...(d.notes ?? [])] } : d)),
-    );
-  }
 
   if (!mounted) {
     return (
@@ -156,16 +100,14 @@ export function PipelineBoard() {
       setPendingLoss({ dealId });
       return;
     }
-    setDeals((prev) => prev.map((d) => (d.id === dealId ? { ...d, stage: targetStage, lossReason: undefined } : d)));
+    updateDeal(dealId, { stage: targetStage, lossReason: undefined });
   }
 
   function confirmLoss() {
     if (!pendingLoss) return;
     const reason = lossReason.trim();
     if (!reason) return;
-    setDeals((prev) =>
-      prev.map((d) => (d.id === pendingLoss.dealId ? { ...d, stage: "closed_lost", lossReason: reason } : d)),
-    );
+    updateDeal(pendingLoss.dealId, { stage: "closed_lost", lossReason: reason });
     setPendingLoss(null);
     setLossReason("");
   }

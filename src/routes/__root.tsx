@@ -18,6 +18,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 import { CurrentUserProvider } from "@/hooks/use-current-user";
+import { DealsProvider } from "@/hooks/use-deals";
 
 function NotFoundComponent() {
   return (
@@ -124,6 +125,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CurrentUserProvider>
+        <DealsProvider>
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
@@ -138,6 +140,7 @@ function RootComponent() {
             <Outlet />
           </SidebarInset>
         </SidebarProvider>
+        </DealsProvider>
         <Toaster />
       </CurrentUserProvider>
     </QueryClientProvider>
