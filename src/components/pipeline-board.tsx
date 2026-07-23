@@ -173,7 +173,15 @@ export function PipelineBoard() {
             />
           ))}
         </div>
-        <DragOverlay>
+        <DragOverlay
+          dropAnimation={{
+            duration: 250,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            sideEffects: defaultDropAnimationSideEffects({
+              styles: { active: { opacity: "0.4" } },
+            }),
+          }}
+        >
           {activeDeal ? <DealCard deal={activeDeal} dragging /> : null}
         </DragOverlay>
       </DndContext>
@@ -254,15 +262,19 @@ function StageColumn({
         isOver && "border-primary bg-primary/5",
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={cn("h-2 w-2 rounded-full", stage.accent)} />
-          <h3 className="text-sm font-semibold text-foreground">{stage.label}</h3>
-          <Badge variant="secondary" className="h-5 px-1.5 text-xs">
-            {deals.length}
-          </Badge>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className={cn("h-2 w-2 rounded-full", stage.accent)} />
+            <h3 className="text-sm font-semibold text-foreground">{stage.label}</h3>
+            <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+              {deals.length}
+            </Badge>
+          </div>
         </div>
-        <span className="text-xs text-muted-foreground">{currency.format(total)}</span>
+        <div className="text-sm font-semibold tabular-nums text-foreground">
+          {currency.format(total)}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         {deals.map((deal) => (
@@ -279,7 +291,7 @@ function StageColumn({
 }
 
 function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: (id: string) => void }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal.id });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: deal.id });
   return (
     <div
       ref={setNodeRef}
@@ -294,6 +306,10 @@ function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: (id: string) => v
           onOpen(deal.id);
         }
       }}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        transition: isDragging ? undefined : "transform 200ms cubic-bezier(0.22, 1, 0.36, 1)",
+      }}
       className={cn("touch-none focus:outline-none", isDragging && "opacity-40")}
     >
       <DealCard deal={deal} />
@@ -302,17 +318,37 @@ function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: (id: string) => v
 }
 
 function DealCard({ deal, dragging = false }: { deal: Deal; dragging?: boolean }) {
+  const stale = isStale(deal);
   return (
     <div
       className={cn(
-        "cursor-grab select-none rounded-md border bg-card p-3 shadow-sm transition-shadow hover:shadow",
+        "cursor-grab select-none rounded-md border bg-card p-3 shadow-sm transition-all duration-200 hover:shadow",
         dragging && "cursor-grabbing shadow-lg ring-1 ring-primary",
+        stale && !dragging && "border-amber-400/60 dark:border-amber-500/40",
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
           <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
           {deal.company}
+          {stale && (
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300"
+                    aria-label="Stale deal"
+                  >
+                    <AlertTriangle className="h-3 w-3" />
+                    Stale
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  No updates in over {STALE_DAYS} days
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         <span className="text-sm font-semibold tabular-nums text-foreground">
           {currency.format(deal.value)}
