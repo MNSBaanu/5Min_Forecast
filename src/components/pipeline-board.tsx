@@ -543,7 +543,7 @@ function DealPanel({
                 <Textarea
                   value={noteDraft}
                   onChange={(e) => setNoteDraft(e.target.value)}
-                  placeholder="Add an update..."
+                  placeholder="What changed? Log a call, next step, or a quick win…"
                   rows={3}
                 />
                 <div className="flex justify-end">
