@@ -14,6 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import logoAsset from "@/assets/logo.png.asset.json";
+import analyticsPreview from "@/assets/analytics-preview.jpg.asset.json";
+import contactsPreview from "@/assets/contacts-preview.jpg.asset.json";
+import importPreview from "@/assets/import-preview.jpg.asset.json";
+import { Reveal } from "@/components/reveal";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const HERO_IMAGE =
@@ -112,21 +116,21 @@ function LandingPage() {
           />
           <div className="relative mx-auto max-w-7xl">
             <div className="mx-auto max-w-3xl text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 shadow-elegant">
-                <span className="flex h-2 w-2 rounded-full bg-primary" />
+              <Reveal className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 shadow-elegant">
+                <span className="flex h-2 w-2 animate-pulse rounded-full bg-primary" />
                 <span className="text-xs font-medium text-muted-foreground">
                   Built for 5-person sales teams
                 </span>
-              </div>
-              <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              </Reveal>
+              <Reveal as="h1" delay={80} className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Close the month with a forecast you actually trust.
-              </h1>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              </Reveal>
+              <Reveal as="p" delay={160} className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 A lightweight CRM that helps small sales teams move off spreadsheets. Reps update deals in
                 minutes, managers get a clean weighted forecast, and nobody wastes Friday afternoon chasing
                 numbers.
-              </p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              </Reveal>
+              <Reveal delay={240} className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 {!loading && isAuthenticated ? (
                   <Button
                     size="lg"
@@ -154,14 +158,14 @@ function LandingPage() {
                     </Button>
                   </>
                 )}
-              </div>
+              </Reveal>
               <p className="mt-4 text-xs text-muted-foreground">
                 Free to try. No credit card required.
               </p>
             </div>
 
-            <div className="mt-16">
-              <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-glow">
+            <Reveal delay={320} y={32} className="mt-16">
+              <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-glow transition-transform duration-500 hover:-translate-y-1">
                 <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background/80 to-transparent" />
                 <img
                   src={HERO_IMAGE}
@@ -170,7 +174,7 @@ function LandingPage() {
                   loading="eager"
                 />
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
@@ -199,7 +203,7 @@ function LandingPage() {
         {/* Features */}
         <section id="features" className="px-6 py-24">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-16 max-w-2xl">
+            <Reveal className="mb-16 max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">
                 Features
               </p>
@@ -210,39 +214,80 @@ function LandingPage() {
                 No bloat, no enterprise complexity. Just the tools you need to keep deals moving and
                 forecasts accurate.
               </p>
-            </div>
+            </Reveal>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <FeatureCard
-                icon={Kanban}
-                title="Drag-and-drop pipeline"
-                description="Move deals across six fixed stages. Cards update instantly and the whole team stays aligned."
-              />
-              <FeatureCard
-                icon={LineChart}
-                title="Weighted monthly forecast"
-                description="Stage probabilities turn your open pipeline into a realistic forecast number in seconds."
-              />
-              <FeatureCard
-                icon={Sparkles}
-                title="AI summaries for managers"
-                description="Get a quick read on pipeline health, risks, and themes without reading every note."
-              />
-              <FeatureCard
-                icon={Upload}
-                title="CSV import with mapping"
-                description="Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes."
-              />
-              <FeatureCard
-                icon={Users}
-                title="Contacts & companies"
-                description="Link deals to the people and accounts behind them. See every related opportunity in one place."
-              />
-              <FeatureCard
-                icon={ShieldCheck}
-                title="Role-based access"
-                description="Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe."
-              />
+              {[
+                { icon: Kanban, title: "Drag-and-drop pipeline", description: "Move deals across six fixed stages. Cards update instantly and the whole team stays aligned." },
+                { icon: LineChart, title: "Weighted monthly forecast", description: "Stage probabilities turn your open pipeline into a realistic forecast number in seconds." },
+                { icon: Sparkles, title: "AI summaries for managers", description: "Get a quick read on pipeline health, risks, and themes without reading every note." },
+                { icon: Upload, title: "CSV import with mapping", description: "Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes." },
+                { icon: Users, title: "Contacts & companies", description: "Link deals to the people and accounts behind them. See every related opportunity in one place." },
+                { icon: ShieldCheck, title: "Role-based access", description: "Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe." },
+              ].map((f, i) => (
+                <Reveal key={f.title} delay={i * 70}>
+                  <FeatureCard icon={f.icon} title={f.title} description={f.description} />
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Product showcase: Analytics */}
+            <div className="mt-24 grid items-center gap-12 lg:grid-cols-2">
+              <Reveal>
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">Analytics</p>
+                <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
+                  A weighted forecast, at a glance
+                </h3>
+                <p className="mt-4 text-muted-foreground">
+                  KPI cards, pipeline-by-stage bars, and a monthly trend line. Filter by rep, stage, or close
+                  month and watch every number recalc instantly.
+                </p>
+                <ul className="mt-6 space-y-3 text-sm text-foreground">
+                  {["Real-time weighted forecast", "Stale-deal alerts before they slip", "Filter by rep, stage, or month"].map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-primary" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+              <Reveal delay={120} y={24}>
+                <ProductShot src={analyticsPreview.url} alt="Analytics dashboard with pipeline KPIs and forecast charts" />
+              </Reveal>
+            </div>
+
+            {/* Product showcase: Contacts */}
+            <div className="mt-24 grid items-center gap-12 lg:grid-cols-2">
+              <Reveal className="lg:order-2">
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">Contacts</p>
+                <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
+                  People and companies, linked to every deal
+                </h3>
+                <p className="mt-4 text-muted-foreground">
+                  Toggle between contacts and companies. Open any record to see linked opportunities, deal
+                  values, and current stage — no more hunting through tabs.
+                </p>
+              </Reveal>
+              <Reveal delay={120} y={24} className="lg:order-1">
+                <ProductShot src={contactsPreview.url} alt="Contacts table with linked deals and stages" />
+              </Reveal>
+            </div>
+
+            {/* Product showcase: Import */}
+            <div className="mt-24 grid items-center gap-12 lg:grid-cols-2">
+              <Reveal>
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">CSV import</p>
+                <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
+                  Move off spreadsheets in three steps
+                </h3>
+                <p className="mt-4 text-muted-foreground">
+                  Upload, map columns to fields, preview the rows, and import. Invalid rows are flagged with
+                  a clear reason so nothing sneaks in broken.
+                </p>
+              </Reveal>
+              <Reveal delay={120} y={24}>
+                <ProductShot src={importPreview.url} alt="CSV import wizard mapping spreadsheet columns to deal fields" />
+              </Reveal>
             </div>
           </div>
         </section>
@@ -268,21 +313,15 @@ function LandingPage() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-3">
-              <StepCard
-                step="01"
-                title="Set your stages"
-                description="Start with six proven pipeline stages and default probabilities. Adjust them to match your sales motion."
-              />
-              <StepCard
-                step="02"
-                title="Add or import deals"
-                description="Create deals one by one or import a CSV. Contacts and companies are linked automatically."
-              />
-              <StepCard
-                step="03"
-                title="Review the forecast"
-                description="Reps update stages daily. Managers open the analytics dashboard and see a weighted forecast in minutes."
-              />
+              {[
+                { step: "01", title: "Set your stages", description: "Start with six proven pipeline stages and default probabilities. Adjust them to match your sales motion." },
+                { step: "02", title: "Add or import deals", description: "Create deals one by one or import a CSV. Contacts and companies are linked automatically." },
+                { step: "03", title: "Review the forecast", description: "Reps update stages daily. Managers open the analytics dashboard and see a weighted forecast in minutes." },
+              ].map((s, i) => (
+                <Reveal key={s.step} delay={i * 100}>
+                  <StepCard step={s.step} title={s.title} description={s.description} />
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>
