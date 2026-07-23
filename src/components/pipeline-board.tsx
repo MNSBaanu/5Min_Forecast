@@ -305,6 +305,7 @@ function DealPanel({
   onAddNote: (id: string, note: Note) => void;
 }) {
   const { name } = useCurrentUser();
+  const { contacts, companies } = useContacts();
   const [noteDraft, setNoteDraft] = useState("");
 
   useEffect(() => {
@@ -343,19 +344,49 @@ function DealPanel({
           <div className="grid gap-5 px-6 py-5">
             <div className="grid gap-2">
               <Label htmlFor="deal-company">Company</Label>
-              <Input
-                id="deal-company"
-                value={deal.company}
-                onChange={(e) => onUpdate(deal.id, { company: e.target.value })}
-              />
+              <Select
+                value={deal.company || undefined}
+                onValueChange={(v) => onUpdate(deal.id, { company: v })}
+              >
+                <SelectTrigger id="deal-company">
+                  <SelectValue placeholder="Link a company" />
+                </SelectTrigger>
+                <SelectContent>
+                  {deal.company && !companies.some((c) => c.name === deal.company) && (
+                    <SelectItem value={deal.company}>{deal.company}</SelectItem>
+                  )}
+                  {companies.map((c) => (
+                    <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="deal-contact">Contact</Label>
-              <Input
-                id="deal-contact"
-                value={deal.contact}
-                onChange={(e) => onUpdate(deal.id, { contact: e.target.value })}
-              />
+              <Select
+                value={deal.contact || undefined}
+                onValueChange={(v) => {
+                  const c = contacts.find((x) => x.name === v);
+                  const patch: Partial<Deal> = { contact: v };
+                  if (c && c.company) patch.company = c.company;
+                  onUpdate(deal.id, patch);
+                }}
+              >
+                <SelectTrigger id="deal-contact">
+                  <SelectValue placeholder="Link a contact" />
+                </SelectTrigger>
+                <SelectContent>
+                  {deal.contact && !contacts.some((c) => c.name === deal.contact) && (
+                    <SelectItem value={deal.contact}>{deal.contact}</SelectItem>
+                  )}
+                  {contacts.map((c) => (
+                    <SelectItem key={c.id} value={c.name}>
+                      {c.name}
+                      {c.company ? ` · ${c.company}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
