@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useContacts, type Contact, type Company } from "@/hooks/use-contacts";
+import { useDeals, STAGE_LABEL } from "@/hooks/use-deals";
 
 export const Route = createFileRoute("/contacts")({
   head: () => ({
@@ -24,48 +26,11 @@ export const Route = createFileRoute("/contacts")({
   component: ContactsPage,
 });
 
-type Contact = { id: string; name: string; email: string; phone: string; company: string };
-type Company = { id: string; name: string; industry: string; website: string };
-type LinkedDeal = { id: string; title: string; company: string; contact: string; value: number; stage: string };
-
-const STAGE_LABELS: Record<string, string> = {
-  lead: "Lead",
-  qualified: "Qualified",
-  proposal: "Proposal",
-  negotiation: "Negotiation",
-  closed_won: "Closed Won",
-  closed_lost: "Closed Lost",
-};
-
-const INITIAL_COMPANIES: Company[] = [
-  { id: "c1", name: "Acme Corp", industry: "Manufacturing", website: "acme.com" },
-  { id: "c2", name: "Globex", industry: "Energy", website: "globex.com" },
-  { id: "c3", name: "Initech", industry: "Software", website: "initech.com" },
-  { id: "c4", name: "Stark Industries", industry: "Defense", website: "stark.com" },
-  { id: "c5", name: "Wayne Enterprises", industry: "Conglomerate", website: "wayne.com" },
-];
-
-const INITIAL_CONTACTS: Contact[] = [
-  { id: "p1", name: "Jane Cooper", email: "jane@acme.com", phone: "+1 415 555 0110", company: "Acme Corp" },
-  { id: "p2", name: "Wade Warren", email: "wade@globex.com", phone: "+1 415 555 0122", company: "Globex" },
-  { id: "p3", name: "Esther Howard", email: "esther@initech.com", phone: "+1 415 555 0155", company: "Initech" },
-  { id: "p4", name: "Robert Downey", email: "robert@stark.com", phone: "+1 415 555 0177", company: "Stark Industries" },
-  { id: "p5", name: "Bruce Wayne", email: "bruce@wayne.com", phone: "+1 415 555 0188", company: "Wayne Enterprises" },
-];
-
-const DEALS: LinkedDeal[] = [
-  { id: "d1", title: "Acme Q3 renewal", company: "Acme Corp", contact: "Jane Cooper", value: 12000, stage: "lead" },
-  { id: "d2", title: "Globex expansion", company: "Globex", contact: "Wade Warren", value: 45000, stage: "lead" },
-  { id: "d3", title: "Initech pilot", company: "Initech", contact: "Esther Howard", value: 8000, stage: "qualified" },
-  { id: "d5", title: "Stark platform", company: "Stark Industries", contact: "Robert Downey", value: 92000, stage: "proposal" },
-  { id: "d6", title: "Wayne enterprise deal", company: "Wayne Enterprises", contact: "Bruce Wayne", value: 128000, stage: "negotiation" },
-];
-
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 function ContactsPage() {
-  const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS);
-  const [companies, setCompanies] = useState<Company[]>(INITIAL_COMPANIES);
+  const { contacts, companies, addContact, addCompany } = useContacts();
+  const { deals } = useDeals();
   const [selected, setSelected] = useState<
     | { kind: "contact"; item: Contact }
     | { kind: "company"; item: Company }
@@ -75,9 +40,9 @@ function ContactsPage() {
   const linkedDeals = useMemo(() => {
     if (!selected) return [];
     return selected.kind === "contact"
-      ? DEALS.filter((d) => d.contact === selected.item.name)
-      : DEALS.filter((d) => d.company === selected.item.name);
-  }, [selected]);
+      ? deals.filter((d) => d.contact === selected.item.name)
+      : deals.filter((d) => d.company === selected.item.name);
+  }, [selected, deals]);
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
@@ -103,10 +68,7 @@ function ContactsPage() {
                 <CardTitle className="text-base">People</CardTitle>
                 <CardDescription>Everyone your team is talking to.</CardDescription>
               </div>
-              <AddContactDialog
-                companies={companies}
-                onAdd={(c) => setContacts((prev) => [...prev, c])}
-              />
+              <AddContactDialog companies={companies} onAdd={addContact} />
             </CardHeader>
             <CardContent className="p-0">
               <Table>
@@ -151,7 +113,7 @@ function ContactsPage() {
                 <CardTitle className="text-base">Companies</CardTitle>
                 <CardDescription>Every account with an active or past deal.</CardDescription>
               </div>
-              <AddCompanyDialog onAdd={(c) => setCompanies((prev) => [...prev, c])} />
+              <AddCompanyDialog onAdd={addCompany} />
             </CardHeader>
             <CardContent className="p-0">
               <Table>
@@ -199,25 +161,25 @@ function ContactsPage() {
                 </SheetTitle>
                 <SheetDescription>
                   {selected.kind === "contact"
-                    ? `Contact at ${(selected.item as Contact).company}`
-                    : `${(selected.item as Company).industry} · ${(selected.item as Company).website}`}
+                    ? `Contact at ${(selected.item as Contact).company || "—"}`
+                    : `${(selected.item as Company).industry || "—"} · ${(selected.item as Company).website || "—"}`}
                 </SheetDescription>
               </SheetHeader>
 
               {selected.kind === "contact" && (
                 <div className="mt-4 space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-4 w-4" /> {(selected.item as Contact).email}
+                    <Mail className="h-4 w-4" /> {(selected.item as Contact).email || "—"}
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-4 w-4" /> {(selected.item as Contact).phone}
+                    <Phone className="h-4 w-4" /> {(selected.item as Contact).phone || "—"}
                   </div>
                 </div>
               )}
               {selected.kind === "company" && (
                 <div className="mt-4 space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Globe className="h-4 w-4" /> {(selected.item as Company).website}
+                    <Globe className="h-4 w-4" /> {(selected.item as Company).website || "—"}
                   </div>
                 </div>
               )}
@@ -230,11 +192,11 @@ function ContactsPage() {
                   {linkedDeals.map((d) => (
                     <div key={d.id} className="rounded-md border p-3">
                       <div className="flex items-center justify-between">
-                        <div className="font-medium text-sm">{d.title}</div>
-                        <Badge variant="secondary">{STAGE_LABELS[d.stage] ?? d.stage}</Badge>
+                        <div className="font-medium text-sm">{d.company}</div>
+                        <Badge variant="secondary">{STAGE_LABEL[d.stage] ?? d.stage}</Badge>
                       </div>
                       <div className="mt-1 text-xs text-muted-foreground">
-                        {selected.kind === "contact" ? d.company : d.contact} · {currency.format(d.value)}
+                        {selected.kind === "contact" ? d.company : d.contact || "—"} · {currency.format(d.value)}
                       </div>
                     </div>
                   ))}
@@ -251,18 +213,34 @@ function ContactsPage() {
   );
 }
 
-function AddContactDialog({ companies, onAdd }: { companies: Company[]; onAdd: (c: Contact) => void }) {
+function AddContactDialog({
+  companies,
+  onAdd,
+}: {
+  companies: Company[];
+  onAdd: (input: { name: string; email: string; phone: string; companyName: string }) => Promise<Contact | null>;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [company, setCompany] = useState<string>(companies[0]?.name ?? "");
+  const [company, setCompany] = useState<string>("");
+  const [saving, setSaving] = useState(false);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return;
-    onAdd({ id: crypto.randomUUID(), name: name.trim(), email: email.trim(), phone: phone.trim(), company });
-    setName(""); setEmail(""); setPhone("");
-    setOpen(false);
+    setSaving(true);
+    const res = await onAdd({
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      companyName: company,
+    });
+    setSaving(false);
+    if (res) {
+      setName(""); setEmail(""); setPhone(""); setCompany("");
+      setOpen(false);
+    }
   }
 
   return (
@@ -302,24 +280,35 @@ function AddContactDialog({ companies, onAdd }: { companies: Company[]; onAdd: (
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={submit} disabled={!name.trim()}>Add contact</Button>
+          <Button onClick={submit} disabled={!name.trim() || saving}>
+            {saving ? "Adding…" : "Add contact"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
 
-function AddCompanyDialog({ onAdd }: { onAdd: (c: Company) => void }) {
+function AddCompanyDialog({
+  onAdd,
+}: {
+  onAdd: (input: { name: string; industry: string; website: string }) => Promise<Company | null>;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return;
-    onAdd({ id: crypto.randomUUID(), name: name.trim(), industry: industry.trim(), website: website.trim() });
-    setName(""); setIndustry(""); setWebsite("");
-    setOpen(false);
+    setSaving(true);
+    const res = await onAdd({ name: name.trim(), industry: industry.trim(), website: website.trim() });
+    setSaving(false);
+    if (res) {
+      setName(""); setIndustry(""); setWebsite("");
+      setOpen(false);
+    }
   }
 
   return (
@@ -348,7 +337,9 @@ function AddCompanyDialog({ onAdd }: { onAdd: (c: Company) => void }) {
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={submit} disabled={!name.trim()}>Add company</Button>
+          <Button onClick={submit} disabled={!name.trim() || saving}>
+            {saving ? "Adding…" : "Add company"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
