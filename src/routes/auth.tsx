@@ -102,7 +102,9 @@ function AuthPage() {
     <main className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-md items-center px-4 py-8">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>{mode === "signin" ? "Sign in" : "Create account"}</CardTitle>
+          <CardTitle>
+            <h1>{mode === "signin" ? "Sign in" : "Create account"}</h1>
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button variant="outline" className="w-full" onClick={handleGoogle} disabled={busy}>
