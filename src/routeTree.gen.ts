@@ -13,7 +13,6 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ImportRouteImport } from './routes/import'
-import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
@@ -40,11 +39,6 @@ const McpRoute = McpRouteImport.update({
 const ImportRoute = ImportRouteImport.update({
   id: '/import',
   path: '/import',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactsRoute = ContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -90,7 +84,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
-  '/contacts': typeof ContactsRoute
   '/import': typeof ImportRoute
   '/mcp': typeof McpRoute
   '/settings': typeof SettingsRoute
@@ -104,7 +97,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
-  '/contacts': typeof ContactsRoute
   '/import': typeof ImportRoute
   '/mcp': typeof McpRoute
   '/settings': typeof SettingsRoute
@@ -119,7 +111,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
-  '/contacts': typeof ContactsRoute
   '/import': typeof ImportRoute
   '/mcp': typeof McpRoute
   '/settings': typeof SettingsRoute
@@ -135,7 +126,6 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
-    | '/contacts'
     | '/import'
     | '/mcp'
     | '/settings'
@@ -149,7 +139,6 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
-    | '/contacts'
     | '/import'
     | '/mcp'
     | '/settings'
@@ -163,7 +152,6 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
-    | '/contacts'
     | '/import'
     | '/mcp'
     | '/settings'
@@ -178,7 +166,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
-  ContactsRoute: typeof ContactsRoute
   ImportRoute: typeof ImportRoute
   McpRoute: typeof McpRoute
   SettingsRoute: typeof SettingsRoute
@@ -217,13 +204,6 @@ declare module '@tanstack/react-router' {
       path: '/import'
       fullPath: '/import'
       preLoaderRoute: typeof ImportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contacts': {
-      id: '/contacts'
-      path: '/contacts'
-      fullPath: '/contacts'
-      preLoaderRoute: typeof ContactsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -282,7 +262,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
-  ContactsRoute: ContactsRoute,
   ImportRoute: ImportRoute,
   McpRoute: McpRoute,
   SettingsRoute: SettingsRoute,
