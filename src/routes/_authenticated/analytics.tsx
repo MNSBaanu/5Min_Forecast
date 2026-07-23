@@ -7,6 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   loadStageProbabilities,
@@ -220,8 +226,29 @@ function AnalyticsPage() {
             icon={<TrendingUp className="h-4 w-4" />}
             label="Weighted forecast"
             value={currency.format(Math.round(weightedForecast))}
-            hint="Value × stage probability"
+            hint="Each open deal × its stage probability"
             accent
+            tooltip={
+              <div className="space-y-1.5">
+                <p className="font-medium text-foreground">How this is calculated</p>
+                <p className="text-xs text-muted-foreground">
+                  We multiply every deal's value by the win probability for its stage, then add them up.
+                </p>
+                <ul className="mt-1 space-y-0.5 text-xs">
+                  {STAGE_META.map((s) => (
+                    <li key={s.id} className="flex items-center justify-between gap-4">
+                      <span className="text-foreground">{s.label}</span>
+                      <span className="tabular-nums text-muted-foreground">
+                        {probabilities[s.id] ?? 0}%
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="pt-1 text-[11px] text-muted-foreground">
+                  Adjust these in Manager settings.
+                </p>
+              </div>
+            }
           />
           <MetricCard
             icon={<Building2 className="h-4 w-4" />}
@@ -283,13 +310,25 @@ function MetricCard({
   value,
   hint,
   accent,
+  tooltip,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   hint: string;
   accent?: boolean;
+  tooltip?: React.ReactNode;
 }) {
+  const titleNode = (
+    <CardTitle
+      className={cn(
+        "text-3xl font-semibold tabular-nums text-foreground",
+        tooltip && "cursor-help underline decoration-dotted decoration-muted-foreground/40 underline-offset-4",
+      )}
+    >
+      {value}
+    </CardTitle>
+  );
   return (
     <Card className={cn(accent && "border-primary/40 bg-primary/5")}>
       <CardHeader className="pb-2">
@@ -297,7 +336,22 @@ function MetricCard({
           {icon}
           {label}
         </CardDescription>
-        <CardTitle className="text-3xl font-semibold tabular-nums text-foreground">{value}</CardTitle>
+        {tooltip ? (
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} aria-label={`${label}: how it's calculated`}>
+                  {titleNode}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="start" className="max-w-xs">
+                {tooltip}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          titleNode
+        )}
       </CardHeader>
       <CardContent className="pt-0 text-xs text-muted-foreground">{hint}</CardContent>
     </Card>
