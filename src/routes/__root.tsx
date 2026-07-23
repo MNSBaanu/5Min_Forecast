@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,7 +12,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { AppSidebar } from "@/components/app-sidebar";
+
 import { AuthMenu } from "@/components/auth-menu";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -90,13 +93,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Five Minute Forecast" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "google-site-verification", content: "vSmw7uZlWZ--_MwzJNIx-LXfjT0U4cSrb56vh_8z9oU" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: logoAsset.url, type: "image/png" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -121,24 +131,38 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isPublicChromeless = pathname === "/" || pathname.startsWith("/auth");
 
   return (
     <QueryClientProvider client={queryClient}>
       <CurrentUserProvider>
         <ContactsProvider>
         <DealsProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
-              <SidebarTrigger />
-              <Separator orientation="vertical" className="h-6" />
-              <div className="flex-1" />
-              <AuthMenu />
-            </header>
-            <Outlet />
-          </SidebarInset>
-        </SidebarProvider>
+        {isPublicChromeless ? (
+          <Outlet />
+        ) : (
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border/60 bg-background/80 px-6 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+                <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+                <Separator orientation="vertical" className="h-6" />
+                <div className="hidden sm:block">
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                    5Min Forecast
+                  </p>
+                  <p className="font-display text-sm font-semibold text-foreground">
+                    Sales workspace
+                  </p>
+                </div>
+                <div className="flex-1" />
+                <AuthMenu />
+              </header>
+              <Outlet />
+            </SidebarInset>
+          </SidebarProvider>
+        )}
         </DealsProvider>
         </ContactsProvider>
         <Toaster />

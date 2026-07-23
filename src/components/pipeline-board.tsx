@@ -258,21 +258,23 @@ function StageColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex min-h-[420px] flex-col gap-3 rounded-lg border bg-card/40 p-3 transition-colors",
-        isOver && "border-primary bg-primary/5",
+        "flex min-h-[420px] flex-col gap-3 rounded-xl border border-border/70 bg-gradient-surface p-3 transition-all",
+        isOver && "border-primary/60 bg-primary/5 shadow-glow",
       )}
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 px-1 pt-0.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={cn("h-2 w-2 rounded-full", stage.accent)} />
-            <h3 className="text-sm font-semibold text-foreground">{stage.label}</h3>
-            <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className={cn("h-2.5 w-2.5 rounded-full ring-2 ring-background", stage.accent)} />
+            <h3 className="truncate font-display text-sm font-semibold tracking-tight text-foreground">
+              {stage.label}
+            </h3>
+            <Badge variant="secondary" className="h-5 shrink-0 px-1.5 text-[10px] font-medium">
               {deals.length}
             </Badge>
           </div>
         </div>
-        <div className="text-sm font-semibold tabular-nums text-foreground">
+        <div className="font-display text-base font-semibold tabular-nums text-foreground">
           {currency.format(total)}
         </div>
       </div>

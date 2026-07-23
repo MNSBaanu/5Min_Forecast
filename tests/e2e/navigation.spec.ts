@@ -7,7 +7,7 @@ test.describe("authenticated navigation (sales rep)", () => {
   });
 
   const pages: Array<{ path: string; heading: RegExp }> = [
-    { path: "/", heading: /pipeline/i },
+    { path: "/pipeline", heading: /pipeline/i },
     { path: "/analytics", heading: /analytics|forecast|pipeline/i },
     { path: "/contacts", heading: /contacts|people|companies/i },
     { path: "/import", heading: /import|upload|csv/i },
@@ -18,7 +18,7 @@ test.describe("authenticated navigation (sales rep)", () => {
       const errors: string[] = [];
       page.on("pageerror", (err) => errors.push(err.message));
       await page.goto(path);
-      await expect(page.locator("main, body")).toContainText(heading, { timeout: 15_000 });
+      await expect(page.getByRole("main").first()).toContainText(heading, { timeout: 15_000 });
       expect(errors, `pageerror on ${path}: ${errors.join(", ")}`).toEqual([]);
     });
   }

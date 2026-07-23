@@ -330,10 +330,30 @@ function MetricCard({
     </CardTitle>
   );
   return (
-    <Card className={cn(accent && "border-primary/40 bg-primary/5")}>
+    <Card
+      className={cn(
+        "relative overflow-hidden shadow-elegant transition-shadow hover:shadow-glow",
+        accent && "border-primary/30 bg-gradient-surface",
+      )}
+    >
+      {accent && (
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-0.5 bg-gradient-brand"
+        />
+      )}
       <CardHeader className="pb-2">
-        <CardDescription className="flex items-center gap-1.5 text-xs uppercase tracking-wide">
-          {icon}
+        <CardDescription className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
+          <span
+            className={cn(
+              "flex h-7 w-7 items-center justify-center rounded-md",
+              accent
+                ? "bg-primary/15 text-primary"
+                : "bg-muted text-muted-foreground",
+            )}
+          >
+            {icon}
+          </span>
           {label}
         </CardDescription>
         {tooltip ? (
