@@ -14,6 +14,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as BlogHowToCreateASalesForecastRouteImport } from './routes/blog.how-to-create-a-sales-forecast'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedImportRouteImport } from './routes/_authenticated/import'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
@@ -47,6 +48,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const BlogHowToCreateASalesForecastRoute =
+  BlogHowToCreateASalesForecastRouteImport.update({
+    id: '/blog/how-to-create-a-sales-forecast',
+    path: '/blog/how-to-create-a-sales-forecast',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -102,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof AuthenticatedContactsRoute
   '/import': typeof AuthenticatedImportRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/blog/how-to-create-a-sales-forecast': typeof BlogHowToCreateASalesForecastRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/contacts': typeof AuthenticatedContactsRoute
   '/import': typeof AuthenticatedImportRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/blog/how-to-create-a-sales-forecast': typeof BlogHowToCreateASalesForecastRoute
   '/': typeof AuthenticatedIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/import': typeof AuthenticatedImportRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/blog/how-to-create-a-sales-forecast': typeof BlogHowToCreateASalesForecastRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/import'
     | '/settings'
+    | '/blog/how-to-create-a-sales-forecast'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/import'
     | '/settings'
+    | '/blog/how-to-create-a-sales-forecast'
     | '/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts'
     | '/_authenticated/import'
     | '/_authenticated/settings'
+    | '/blog/how-to-create-a-sales-forecast'
     | '/_authenticated/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -188,6 +201,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  BlogHowToCreateASalesForecastRoute: typeof BlogHowToCreateASalesForecastRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -228,6 +242,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/how-to-create-a-sales-forecast': {
+      id: '/blog/how-to-create-a-sales-forecast'
+      path: '/blog/how-to-create-a-sales-forecast'
+      fullPath: '/blog/how-to-create-a-sales-forecast'
+      preLoaderRoute: typeof BlogHowToCreateASalesForecastRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
@@ -315,6 +336,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  BlogHowToCreateASalesForecastRoute: BlogHowToCreateASalesForecastRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
