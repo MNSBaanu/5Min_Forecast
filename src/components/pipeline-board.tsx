@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -73,6 +73,8 @@ export function PipelineBoard() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pendingLoss, setPendingLoss] = useState<{ dealId: string } | null>(null);
   const [lossReason, setLossReason] = useState("");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -85,6 +87,16 @@ export function PipelineBoard() {
   }, [deals]);
 
   const activeDeal = activeId ? deals.find((d) => d.id === activeId) ?? null : null;
+
+  if (!mounted) {
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {STAGES.map((stage) => (
+          <div key={stage.id} className="min-h-[420px] rounded-lg border bg-card/40 p-3" />
+        ))}
+      </div>
+    );
+  }
 
   function handleDragStart(e: DragStartEvent) {
     setActiveId(String(e.active.id));
