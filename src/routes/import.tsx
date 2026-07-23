@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { STAGE_META, type StageId } from "@/hooks/use-deals";
+import { useContacts } from "@/hooks/use-contacts";
 
 export const Route = createFileRoute("/import")({
   head: () => ({
@@ -104,7 +107,33 @@ function autoMap(headers: string[]): Mapping {
 
 type Step = "upload" | "map" | "preview";
 
+function normalizeStage(raw: string): StageId {
+  const s = raw.toLowerCase().replace(/[^a-z]/g, "");
+  if (!s) return "lead";
+  if (s.includes("won")) return "closed_won";
+  if (s.includes("lost")) return "closed_lost";
+  if (s.includes("negot")) return "negotiation";
+  if (s.includes("propos")) return "proposal";
+  if (s.includes("qual")) return "qualified";
+  if (s.includes("lead") || s.includes("new")) return "lead";
+  const match = STAGE_META.find((m) => m.id.replace(/_/g, "") === s || m.label.toLowerCase().replace(/\s/g, "") === s);
+  return match?.id ?? "lead";
+}
+
+function parseValue(raw: string): number {
+  const n = Number(raw.replace(/[^0-9.\-]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function parseDate(raw: string): string | null {
+  if (!raw) return null;
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString().slice(0, 10);
+}
+
 function ImportPage() {
+  const { companies, contacts, addCompany, addContact } = useContacts();
   const [step, setStep] = useState<Step>("upload");
   const [fileName, setFileName] = useState<string | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
@@ -112,6 +141,7 @@ function ImportPage() {
   const [mapping, setMapping] = useState<Mapping>(emptyMapping);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   const handleFile = async (file: File) => {
     if (!file.name.toLowerCase().endsWith(".csv")) {
@@ -168,9 +198,92 @@ function ImportPage() {
     });
   }, [rows, mapping, headers]);
 
-  const confirmImport = () => {
-    toast.success(`Imported ${rows.length} deal${rows.length === 1 ? "" : "s"}`);
-    reset();
+  const confirmImport = async () => {
+    const { data: userRes } = await supabase.auth.getUser();
+    if (!userRes.user) {
+      toast.error("Please sign in to import deals");
+      return;
+    }
+    setImporting(true);
+    try {
+      // Build normalized rows from full dataset
+      const normalized = rows.map((r) => {
+        const rec: Record<FieldKey, string> = {
+          company: "", contact: "", value: "", stage: "", closeDate: "", owner: "",
+        };
+        for (const field of FIELDS) {
+          const header = mapping[field.key];
+          if (header === IGNORE) continue;
+          const idx = headers.indexOf(header);
+          if (idx >= 0) rec[field.key] = (r[idx] ?? "").trim();
+        }
+        return rec;
+      }).filter((r) => r.company || r.contact);
+
+      if (normalized.length === 0) {
+        toast.error("No importable rows — map at least Company or Contact");
+        setImporting(false);
+        return;
+      }
+
+      // Create missing companies
+      const companyByName = new Map(companies.map((c) => [c.name.toLowerCase(), c]));
+      const uniqueCompanyNames = Array.from(
+        new Set(normalized.map((r) => r.company).filter(Boolean)),
+      );
+      for (const name of uniqueCompanyNames) {
+        if (!companyByName.has(name.toLowerCase())) {
+          const co = await addCompany({ name, industry: "", website: "" });
+          if (co) companyByName.set(co.name.toLowerCase(), co);
+        }
+      }
+
+      // Create missing contacts (keyed by name + company)
+      const contactByKey = new Map(
+        contacts.map((c) => [`${c.name.toLowerCase()}|${(c.company ?? "").toLowerCase()}`, c]),
+      );
+      const uniqueContacts = new Map<string, { name: string; company: string }>();
+      for (const r of normalized) {
+        if (!r.contact) continue;
+        const key = `${r.contact.toLowerCase()}|${r.company.toLowerCase()}`;
+        if (!contactByKey.has(key) && !uniqueContacts.has(key)) {
+          uniqueContacts.set(key, { name: r.contact, company: r.company });
+        }
+      }
+      for (const { name, company } of uniqueContacts.values()) {
+        const c = await addContact({ name, email: "", phone: "", companyName: company });
+        if (c) contactByKey.set(`${c.name.toLowerCase()}|${(c.company ?? "").toLowerCase()}`, c);
+      }
+
+      // Insert deals
+      const dealRows = normalized.map((r) => {
+        const co = r.company ? companyByName.get(r.company.toLowerCase()) : null;
+        const contactKey = `${r.contact.toLowerCase()}|${r.company.toLowerCase()}`;
+        const ct = r.contact ? contactByKey.get(contactKey) : null;
+        return {
+          company_name: r.company || ct?.name || "Untitled",
+          company_id: co?.id ?? null,
+          contact_name: r.contact || null,
+          contact_id: ct?.id ?? null,
+          value: parseValue(r.value),
+          stage_id: normalizeStage(r.stage),
+          expected_close_date: parseDate(r.closeDate),
+          owner: r.owner || userRes.user.email || "Unassigned",
+          created_by: userRes.user.id,
+        };
+      });
+
+      const { error } = await supabase.from("deals").insert(dealRows);
+      if (error) {
+        toast.error("Import failed", { description: error.message });
+        setImporting(false);
+        return;
+      }
+      toast.success(`Imported ${dealRows.length} deal${dealRows.length === 1 ? "" : "s"}`);
+      reset();
+    } finally {
+      setImporting(false);
+    }
   };
 
   return (
@@ -350,9 +463,9 @@ function ImportPage() {
                 <ArrowLeft className="mr-1 h-4 w-4" />
                 Back to mapping
               </Button>
-              <Button onClick={confirmImport}>
+              <Button onClick={confirmImport} disabled={importing}>
                 <CheckCircle2 className="mr-1 h-4 w-4" />
-                Confirm import ({rows.length})
+                {importing ? "Importing…" : `Confirm import (${rows.length})`}
               </Button>
             </div>
           </CardContent>
