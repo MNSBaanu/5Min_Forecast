@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "Pipeline", url: "/", icon: Kanban },
+  { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Contacts", url: "/contacts", icon: Users },
   { title: "CSV Import", url: "/import", icon: Upload },
