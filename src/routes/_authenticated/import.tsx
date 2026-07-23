@@ -27,7 +27,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { STAGE_META, type StageId } from "@/hooks/use-deals";
 import { useContacts } from "@/hooks/use-contacts";
 
-export const Route = createFileRoute("/import")({
+export const Route = createFileRoute("/_authenticated/import")({
   head: () => ({
     meta: [
       { title: "CSV Import — Five Minute Forecast" },
@@ -270,6 +270,7 @@ function ImportPage() {
           expected_close_date: parseDate(r.closeDate),
           owner: r.owner || userRes.user.email || "Unassigned",
           created_by: userRes.user.id,
+          owner_user_id: userRes.user.id,
         };
       });
 

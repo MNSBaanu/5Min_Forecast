@@ -3,7 +3,7 @@ import { PipelineBoard } from "@/components/pipeline-board";
 
 const HERO_IMAGE = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4c4948de-f7e4-41a5-a356-8a5d221e56cb/id-preview-ad8f1576--cc076d1c-1c2b-44d7-a379-b70482f11de4.lovable.app-1784740463797.png";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Pipeline — 5Min Forecast" },

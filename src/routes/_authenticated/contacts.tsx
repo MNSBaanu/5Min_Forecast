@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { useContacts, type Contact, type Company } from "@/hooks/use-contacts";
 import { useDeals, STAGE_LABEL } from "@/hooks/use-deals";
 
-export const Route = createFileRoute("/contacts")({
+export const Route = createFileRoute("/_authenticated/contacts")({
   head: () => ({
     meta: [
       { title: "Contacts — Five Minute Forecast" },
