@@ -347,3 +347,176 @@ function DealCard({ deal, dragging = false }: { deal: Deal; dragging?: boolean }
     </div>
   );
 }
+
+function DealPanel({
+  deal,
+  open,
+  onOpenChange,
+  onUpdate,
+  onAddNote,
+}: {
+  deal: Deal | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onUpdate: (id: string, patch: Partial<Deal>) => void;
+  onAddNote: (id: string, note: Note) => void;
+}) {
+  const { name } = useCurrentUser();
+  const [noteDraft, setNoteDraft] = useState("");
+
+  useEffect(() => {
+    setNoteDraft("");
+  }, [deal?.id]);
+
+  if (!deal) return null;
+
+  const notes = deal.notes ?? [];
+
+  function post() {
+    if (!deal) return;
+    const body = noteDraft.trim();
+    if (!body) return;
+    onAddNote(deal.id, {
+      id: `n_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      author: name,
+      createdAt: new Date().toISOString(),
+      body,
+    });
+    setNoteDraft("");
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-lg">
+        <SheetHeader className="border-b px-6 py-4">
+          <SheetTitle className="flex items-center gap-2 text-base">
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+            {deal.company}
+          </SheetTitle>
+          <SheetDescription>Edit deal details and post updates to the timeline.</SheetDescription>
+        </SheetHeader>
+
+        <ScrollArea className="flex-1">
+          <div className="grid gap-5 px-6 py-5">
+            <div className="grid gap-2">
+              <Label htmlFor="deal-company">Company</Label>
+              <Input
+                id="deal-company"
+                value={deal.company}
+                onChange={(e) => onUpdate(deal.id, { company: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="deal-contact">Contact</Label>
+              <Input
+                id="deal-contact"
+                value={deal.contact}
+                onChange={(e) => onUpdate(deal.id, { contact: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="deal-value">Value (USD)</Label>
+                <Input
+                  id="deal-value"
+                  type="number"
+                  min={0}
+                  value={deal.value}
+                  onChange={(e) => onUpdate(deal.id, { value: Number(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="deal-date">Expected close</Label>
+                <Input
+                  id="deal-date"
+                  type="date"
+                  value={deal.closeDate}
+                  onChange={(e) => onUpdate(deal.id, { closeDate: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label>Stage</Label>
+                <Select
+                  value={deal.stage}
+                  onValueChange={(v) => onUpdate(deal.id, { stage: v as StageId })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STAGES.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Owner</Label>
+                <Select value={deal.owner} onValueChange={(v) => onUpdate(deal.id, { owner: v })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OWNERS.map((o) => (
+                      <SelectItem key={o} value={o}>
+                        {o}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {deal.stage === "closed_lost" && deal.lossReason && (
+              <div className="rounded-md bg-rose-500/10 px-3 py-2 text-xs text-rose-700 dark:text-rose-300">
+                Loss reason: {deal.lossReason}
+              </div>
+            )}
+
+            <div className="border-t pt-5">
+              <h4 className="text-sm font-semibold text-foreground">Notes</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Post quick updates. Newest first.
+              </p>
+              <div className="mt-3 grid gap-2">
+                <Textarea
+                  value={noteDraft}
+                  onChange={(e) => setNoteDraft(e.target.value)}
+                  placeholder="Add an update..."
+                  rows={3}
+                />
+                <div className="flex justify-end">
+                  <Button size="sm" onClick={post} disabled={noteDraft.trim().length === 0}>
+                    <Send className="mr-1.5 h-3.5 w-3.5" />
+                    Post
+                  </Button>
+                </div>
+              </div>
+
+              <ol className="mt-4 flex flex-col gap-3">
+                {notes.length === 0 && (
+                  <li className="rounded-md border border-dashed p-3 text-center text-xs text-muted-foreground">
+                    No notes yet.
+                  </li>
+                )}
+                {notes.map((n) => (
+                  <li key={n.id} className="rounded-md border bg-card p-3">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">{n.author}</span>
+                      <span>{dateTimeFmt.format(new Date(n.createdAt))}</span>
+                    </div>
+                    <p className="mt-1.5 whitespace-pre-wrap text-sm text-foreground">{n.body}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
+  );
+}
