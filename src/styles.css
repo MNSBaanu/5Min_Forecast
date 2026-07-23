@@ -175,6 +175,11 @@
   letter-spacing: -0.02em;
 }
 
+@utility font-handwriting {
+  font-family: var(--font-handwriting);
+  font-weight: 700;
+}
+
 @utility bg-gradient-brand {
   background-image: linear-gradient(135deg, var(--primary) 0%, var(--primary-glow) 100%);
 }
