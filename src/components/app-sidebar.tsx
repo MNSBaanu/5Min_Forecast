@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "Pipeline", url: "/", icon: Kanban },
+  { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Contacts", url: "/contacts", icon: Users },
   { title: "CSV Import", url: "/import", icon: Upload },
@@ -63,7 +63,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {visible.map((item) => {
                 const active =
-                  item.url === "/" ? pathname === "/" : pathname.startsWith(item.url);
+                  item.url === "/pipeline" ? pathname === "/pipeline" : pathname.startsWith(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton

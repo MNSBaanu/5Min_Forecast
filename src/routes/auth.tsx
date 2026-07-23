@@ -14,15 +14,15 @@ import logoAsset from "@/assets/logo.png.asset.json";
 const NEXT_KEY = "fmf.auth.next";
 
 function sanitizeNext(next: string | undefined): string {
-  if (!next) return "/";
+  if (!next) return "/pipeline";
   // Same-origin relative path only.
-  if (!next.startsWith("/") || next.startsWith("//")) return "/";
+  if (!next.startsWith("/") || next.startsWith("//")) return "/pipeline";
   return next;
 }
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { next?: string } => ({
     next: typeof s.next === "string" ? s.next : undefined,
   }),
   head: () => ({
