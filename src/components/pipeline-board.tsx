@@ -42,6 +42,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useDeals, STAGE_META, OWNERS, type Deal, type Note, type StageId } from "@/hooks/use-deals";
+import { useContacts } from "@/hooks/use-contacts";
 import { cn } from "@/lib/utils";
 
 const STAGES = STAGE_META;
