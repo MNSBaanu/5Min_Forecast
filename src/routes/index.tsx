@@ -493,3 +493,26 @@ function MetricCard({ value, label }: { value: string; label: string }) {
     </div>
   );
 }
+
+function ProductShot({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-elegant transition-all duration-500 hover:-translate-y-1 hover:shadow-glow">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(400px circle at 50% 0%, oklch(0.75 0.13 85 / 0.15), transparent 60%)",
+        }}
+      />
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        width={1600}
+        height={1008}
+        className="w-full"
+      />
+    </div>
+  );
+}
