@@ -260,19 +260,6 @@ function AuthPage() {
               {mode === "signin" ? "Create an account" : "Sign in instead"}
             </button>
           </p>
-
-          <div className="mt-8 rounded-lg border border-border/60 bg-muted/40 p-3 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground">Demo accounts</p>
-            <p className="mt-1">
-              Sales Rep — <span className="font-mono">testsr@gmail.com</span>
-            </p>
-            <p>
-              Sales Manager — <span className="font-mono">testsm@gmail.com</span>
-            </p>
-            <p className="mt-1">
-              Password — <span className="font-mono">Test@1234</span>
-            </p>
-          </div>
         </div>
       </section>
     </main>
