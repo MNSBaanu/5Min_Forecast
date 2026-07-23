@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  BarChart3,
   Check,
+  Kanban,
+  LineChart,
+  ShieldCheck,
+  Sparkles,
+  Upload,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -166,11 +173,6 @@ function LandingPage() {
                   className="w-full"
                   loading="eager"
                 />
-                <LogoBadge className="absolute left-5 top-5" />
-                <DoodleCircle className="pointer-events-none absolute -right-8 top-16 hidden h-40 w-52 text-primary/70 md:block" />
-                <span className="pointer-events-none absolute right-4 top-4 hidden font-handwriting text-xl text-primary/80 md:block">
-                  drag me →
-                </span>
               </div>
             </Reveal>
           </div>
@@ -214,23 +216,19 @@ function LandingPage() {
               </p>
             </Reveal>
 
-            <div className="relative divide-y divide-border/70 border-y border-border/70">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { title: "Drag-and-drop pipeline", description: "Move deals across six fixed stages. Cards update instantly and the whole team stays aligned.", tag: "Included" },
-                { title: "Weighted monthly forecast", description: "Stage probabilities turn your open pipeline into a realistic forecast number in seconds.", tag: "Included" },
-                { title: "AI summaries for managers", description: "Get a quick read on pipeline health, risks, and themes without reading every note.", tag: "Manager" },
-                { title: "CSV import with mapping", description: "Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes.", tag: "Included" },
-                { title: "Contacts & companies", description: "Link deals to the people and accounts behind them. See every related opportunity in one place.", tag: "Included" },
-                { title: "Role-based access", description: "Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe.", tag: "Secure" },
+                { icon: Kanban, title: "Drag-and-drop pipeline", description: "Move deals across six fixed stages. Cards update instantly and the whole team stays aligned." },
+                { icon: LineChart, title: "Weighted monthly forecast", description: "Stage probabilities turn your open pipeline into a realistic forecast number in seconds." },
+                { icon: Sparkles, title: "AI summaries for managers", description: "Get a quick read on pipeline health, risks, and themes without reading every note." },
+                { icon: Upload, title: "CSV import with mapping", description: "Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes." },
+                { icon: Users, title: "Contacts & companies", description: "Link deals to the people and accounts behind them. See every related opportunity in one place." },
+                { icon: ShieldCheck, title: "Role-based access", description: "Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe." },
               ].map((f, i) => (
-                <Reveal key={f.title} delay={i * 60}>
-                  <FeatureRow index={i + 1} title={f.title} description={f.description} tag={f.tag} />
+                <Reveal key={f.title} delay={i * 70}>
+                  <FeatureCard icon={f.icon} title={f.title} description={f.description} />
                 </Reveal>
               ))}
-              <DoodleArrow className="pointer-events-none absolute -right-6 top-16 hidden h-24 w-40 text-primary/70 lg:block" />
-              <span className="pointer-events-none absolute -right-2 top-6 hidden font-handwriting text-xl text-primary/80 lg:block">
-                our favorite ✨
-              </span>
             </div>
 
             {/* Product showcase: Analytics */}
@@ -254,11 +252,7 @@ function LandingPage() {
                 </ul>
               </Reveal>
               <Reveal delay={120} y={24}>
-                <ProductShot
-                  src={analyticsPreview.url}
-                  alt="Analytics dashboard with pipeline KPIs and forecast charts"
-                  doodle="forecast"
-                />
+                <ProductShot src={analyticsPreview.url} alt="Analytics dashboard with pipeline KPIs and forecast charts" />
               </Reveal>
             </div>
 
@@ -275,11 +269,7 @@ function LandingPage() {
                 </p>
               </Reveal>
               <Reveal delay={120} y={24} className="lg:order-1">
-                <ProductShot
-                  src={contactsPreview.url}
-                  alt="Contacts table with linked deals and stages"
-                  doodle="linked"
-                />
+                <ProductShot src={contactsPreview.url} alt="Contacts table with linked deals and stages" />
               </Reveal>
             </div>
 
@@ -296,11 +286,7 @@ function LandingPage() {
                 </p>
               </Reveal>
               <Reveal delay={120} y={24}>
-                <ProductShot
-                  src={importPreview.url}
-                  alt="CSV import wizard mapping spreadsheet columns to deal fields"
-                  doodle="map"
-                />
+                <ProductShot src={importPreview.url} alt="CSV import wizard mapping spreadsheet columns to deal fields" />
               </Reveal>
             </div>
           </div>
@@ -467,70 +453,25 @@ function LandingPage() {
   );
 }
 
-function FeatureRow({
-  index,
+function FeatureCard({
+  icon: Icon,
   title,
   description,
-  tag,
 }: {
-  index: number;
+  icon: React.ElementType;
   title: string;
   description: string;
-  tag: string;
 }) {
   return (
-    <div className="group grid grid-cols-[auto_1fr_auto] items-baseline gap-6 py-8 transition-colors hover:bg-muted/30 sm:gap-10">
-      <span className="font-display text-2xl font-semibold text-muted-foreground/60 tabular-nums sm:text-3xl">
-        {String(index).padStart(2, "0")}
-      </span>
-      <div>
-        <h3 className="font-display text-xl font-semibold text-foreground sm:text-2xl">{title}</h3>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          {description}
-        </p>
-      </div>
-      <span className="hidden shrink-0 rounded-full border border-border bg-card px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground sm:inline-flex">
-        {tag}
-      </span>
-    </div>
-  );
-}
-
-function LogoBadge({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={`inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-2.5 py-1 shadow-elegant backdrop-blur ${className}`}
-    >
-      <img src={logoAsset.url} alt="" className="h-5 w-5 rounded-md object-cover" />
-      <span className="font-display text-[11px] font-semibold tracking-tight text-foreground">
-        5Min Forecast
-      </span>
-    </div>
-  );
-}
-
-function DoodleArrow({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 160 90" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
-      <path d="M8 78 C 40 30, 90 20, 140 40" />
-      <path d="M140 40 l -14 -2 M140 40 l -6 12" />
-    </svg>
-  );
-}
-
-function DoodleUnderline({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 160 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden>
-      <path d="M4 12 C 40 4, 90 18, 156 8" />
-    </svg>
-  );
-}
-
-function DoodleCircle({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 200 120" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden>
-      <path d="M30 60 C 20 20, 180 10, 180 60 C 180 110, 40 115, 30 60 Z" />
-    </svg>
+    <Card className="group border-border bg-card shadow-elegant transition-shadow hover:shadow-glow">
+      <CardContent className="p-6">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Icon className="h-5 w-5" />
+        </div>
+        <h3 className="mt-5 font-display text-lg font-semibold text-foreground">{title}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -553,15 +494,7 @@ function MetricCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-function ProductShot({
-  src,
-  alt,
-  doodle,
-}: {
-  src: string;
-  alt: string;
-  doodle?: "forecast" | "linked" | "map";
-}) {
+function ProductShot({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-elegant transition-all duration-500 hover:-translate-y-1 hover:shadow-glow">
       <div
@@ -580,31 +513,6 @@ function ProductShot({
         height={1008}
         className="w-full"
       />
-      <LogoBadge className="absolute left-4 top-4" />
-      {doodle === "forecast" && (
-        <>
-          <DoodleUnderline className="pointer-events-none absolute left-6 bottom-16 h-6 w-40 text-primary/70" />
-          <span className="pointer-events-none absolute left-6 bottom-6 font-handwriting text-lg text-primary/80">
-            weighted forecast
-          </span>
-        </>
-      )}
-      {doodle === "linked" && (
-        <>
-          <DoodleArrow className="pointer-events-none absolute right-6 top-10 h-16 w-32 -scale-x-100 text-primary/70" />
-          <span className="pointer-events-none absolute right-6 top-4 font-handwriting text-lg text-primary/80">
-            linked deals
-          </span>
-        </>
-      )}
-      {doodle === "map" && (
-        <>
-          <DoodleCircle className="pointer-events-none absolute left-4 bottom-6 h-24 w-40 text-primary/70" />
-          <span className="pointer-events-none absolute left-8 bottom-2 font-handwriting text-lg text-primary/80">
-            map any column
-          </span>
-        </>
-      )}
     </div>
   );
 }
