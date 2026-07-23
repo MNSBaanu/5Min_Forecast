@@ -467,25 +467,70 @@ function LandingPage() {
   );
 }
 
-function FeatureCard({
-  icon: Icon,
+function FeatureRow({
+  index,
   title,
   description,
+  tag,
 }: {
-  icon: React.ElementType;
+  index: number;
   title: string;
   description: string;
+  tag: string;
 }) {
   return (
-    <Card className="group border-border bg-card shadow-elegant transition-shadow hover:shadow-glow">
-      <CardContent className="p-6">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-        <h3 className="mt-5 font-display text-lg font-semibold text-foreground">{title}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
+    <div className="group grid grid-cols-[auto_1fr_auto] items-baseline gap-6 py-8 transition-colors hover:bg-muted/30 sm:gap-10">
+      <span className="font-display text-2xl font-semibold text-muted-foreground/60 tabular-nums sm:text-3xl">
+        {String(index).padStart(2, "0")}
+      </span>
+      <div>
+        <h3 className="font-display text-xl font-semibold text-foreground sm:text-2xl">{title}</h3>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {description}
+        </p>
+      </div>
+      <span className="hidden shrink-0 rounded-full border border-border bg-card px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground sm:inline-flex">
+        {tag}
+      </span>
+    </div>
+  );
+}
+
+function LogoBadge({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-2.5 py-1 shadow-elegant backdrop-blur ${className}`}
+    >
+      <img src={logoAsset.url} alt="" className="h-5 w-5 rounded-md object-cover" />
+      <span className="font-display text-[11px] font-semibold tracking-tight text-foreground">
+        5Min Forecast
+      </span>
+    </div>
+  );
+}
+
+function DoodleArrow({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 160 90" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M8 78 C 40 30, 90 20, 140 40" />
+      <path d="M140 40 l -14 -2 M140 40 l -6 12" />
+    </svg>
+  );
+}
+
+function DoodleUnderline({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 160 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden>
+      <path d="M4 12 C 40 4, 90 18, 156 8" />
+    </svg>
+  );
+}
+
+function DoodleCircle({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 200 120" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden>
+      <path d="M30 60 C 20 20, 180 10, 180 60 C 180 110, 40 115, 30 60 Z" />
+    </svg>
   );
 }
 
