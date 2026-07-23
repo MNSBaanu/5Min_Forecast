@@ -553,7 +553,15 @@ function MetricCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-function ProductShot({ src, alt }: { src: string; alt: string }) {
+function ProductShot({
+  src,
+  alt,
+  doodle,
+}: {
+  src: string;
+  alt: string;
+  doodle?: "forecast" | "linked" | "map";
+}) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-elegant transition-all duration-500 hover:-translate-y-1 hover:shadow-glow">
       <div
@@ -572,6 +580,31 @@ function ProductShot({ src, alt }: { src: string; alt: string }) {
         height={1008}
         className="w-full"
       />
+      <LogoBadge className="absolute left-4 top-4" />
+      {doodle === "forecast" && (
+        <>
+          <DoodleUnderline className="pointer-events-none absolute left-6 bottom-16 h-6 w-40 text-primary/70" />
+          <span className="pointer-events-none absolute left-6 bottom-6 font-handwriting text-lg text-primary/80">
+            weighted forecast
+          </span>
+        </>
+      )}
+      {doodle === "linked" && (
+        <>
+          <DoodleArrow className="pointer-events-none absolute right-6 top-10 h-16 w-32 -scale-x-100 text-primary/70" />
+          <span className="pointer-events-none absolute right-6 top-4 font-handwriting text-lg text-primary/80">
+            linked deals
+          </span>
+        </>
+      )}
+      {doodle === "map" && (
+        <>
+          <DoodleCircle className="pointer-events-none absolute left-4 bottom-6 h-24 w-40 text-primary/70" />
+          <span className="pointer-events-none absolute left-8 bottom-2 font-handwriting text-lg text-primary/80">
+            map any column
+          </span>
+        </>
+      )}
     </div>
   );
 }
