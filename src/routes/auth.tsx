@@ -122,9 +122,11 @@ function AuthPage() {
           }}
         />
         <div className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-gold text-sidebar-primary-foreground shadow-glow">
-            <TrendingUp className="h-5 w-5" strokeWidth={2.5} />
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="5Min Forecast"
+            className="h-10 w-10 rounded-xl object-cover shadow-glow"
+          />
           <div className="leading-tight">
             <p className="font-display text-lg font-semibold tracking-tight">5Min Forecast</p>
             <p className="text-[11px] uppercase tracking-[0.18em] text-sidebar-foreground/60">
@@ -132,6 +134,7 @@ function AuthPage() {
             </p>
           </div>
         </div>
+
 
         <div className="relative max-w-md">
           <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight">
