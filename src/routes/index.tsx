@@ -209,19 +209,23 @@ function LandingPage() {
               </p>
             </Reveal>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="relative divide-y divide-border/70 border-y border-border/70">
               {[
-                { icon: Kanban, title: "Drag-and-drop pipeline", description: "Move deals across six fixed stages. Cards update instantly and the whole team stays aligned." },
-                { icon: LineChart, title: "Weighted monthly forecast", description: "Stage probabilities turn your open pipeline into a realistic forecast number in seconds." },
-                { icon: Sparkles, title: "AI summaries for managers", description: "Get a quick read on pipeline health, risks, and themes without reading every note." },
-                { icon: Upload, title: "CSV import with mapping", description: "Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes." },
-                { icon: Users, title: "Contacts & companies", description: "Link deals to the people and accounts behind them. See every related opportunity in one place." },
-                { icon: ShieldCheck, title: "Role-based access", description: "Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe." },
+                { title: "Drag-and-drop pipeline", description: "Move deals across six fixed stages. Cards update instantly and the whole team stays aligned.", tag: "Included" },
+                { title: "Weighted monthly forecast", description: "Stage probabilities turn your open pipeline into a realistic forecast number in seconds.", tag: "Included" },
+                { title: "AI summaries for managers", description: "Get a quick read on pipeline health, risks, and themes without reading every note.", tag: "Manager" },
+                { title: "CSV import with mapping", description: "Upload a spreadsheet, map the columns, preview the rows, and import deals in minutes.", tag: "Included" },
+                { title: "Contacts & companies", description: "Link deals to the people and accounts behind them. See every related opportunity in one place.", tag: "Included" },
+                { title: "Role-based access", description: "Sales reps own their deals. Sales managers see the full picture. Row-level security keeps data safe.", tag: "Secure" },
               ].map((f, i) => (
-                <Reveal key={f.title} delay={i * 70}>
-                  <FeatureCard icon={f.icon} title={f.title} description={f.description} />
+                <Reveal key={f.title} delay={i * 60}>
+                  <FeatureRow index={i + 1} title={f.title} description={f.description} tag={f.tag} />
                 </Reveal>
               ))}
+              <DoodleArrow className="pointer-events-none absolute -right-6 top-16 hidden h-24 w-40 text-primary/70 lg:block" />
+              <span className="pointer-events-none absolute -right-2 top-6 hidden font-handwriting text-xl text-primary/80 lg:block">
+                our favorite ✨
+              </span>
             </div>
 
             {/* Product showcase: Analytics */}
@@ -245,7 +249,11 @@ function LandingPage() {
                 </ul>
               </Reveal>
               <Reveal delay={120} y={24}>
-                <ProductShot src={analyticsPreview.url} alt="Analytics dashboard with pipeline KPIs and forecast charts" />
+                <ProductShot
+                  src={analyticsPreview.url}
+                  alt="Analytics dashboard with pipeline KPIs and forecast charts"
+                  doodle="forecast"
+                />
               </Reveal>
             </div>
 
@@ -262,7 +270,11 @@ function LandingPage() {
                 </p>
               </Reveal>
               <Reveal delay={120} y={24} className="lg:order-1">
-                <ProductShot src={contactsPreview.url} alt="Contacts table with linked deals and stages" />
+                <ProductShot
+                  src={contactsPreview.url}
+                  alt="Contacts table with linked deals and stages"
+                  doodle="linked"
+                />
               </Reveal>
             </div>
 
@@ -279,7 +291,11 @@ function LandingPage() {
                 </p>
               </Reveal>
               <Reveal delay={120} y={24}>
-                <ProductShot src={importPreview.url} alt="CSV import wizard mapping spreadsheet columns to deal fields" />
+                <ProductShot
+                  src={importPreview.url}
+                  alt="CSV import wizard mapping spreadsheet columns to deal fields"
+                  doodle="map"
+                />
               </Reveal>
             </div>
           </div>
