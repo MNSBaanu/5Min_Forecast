@@ -89,8 +89,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "Lovable" },
+      { title: "5Min Forecast — Lightweight CRM & Sales Forecasting" },
+      {
+        name: "description",
+        content:
+          "Lightweight CRM for small sales teams. Keep deals current daily and get a weighted monthly forecast in minutes.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Five Minute Forecast" },
+      { property: "og:url", content: "https://fiveminforecast.lovable.app" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "google-site-verification", content: "vSmw7uZlWZ--_MwzJNIx-LXfjT0U4cSrb56vh_8z9oU" },
@@ -106,6 +113,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Five Minute Forecast",
+          url: "https://fiveminforecast.lovable.app",
+          logo: "https://fiveminforecast.lovable.app/favicon.ico",
+          description:
+            "Lightweight CRM for small sales teams. Keep deals current daily and get a weighted monthly forecast in minutes.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Five Minute Forecast",
+          url: "https://fiveminforecast.lovable.app",
+        }),
       },
     ],
   }),

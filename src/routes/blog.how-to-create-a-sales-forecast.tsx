@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const TITLE = "How to Create a Sales Forecast: Step-by-Step Guide for Managers";
+const TITLE = "How to Create a Sales Forecast: Step-by-Step Guide";
 const DESCRIPTION =
   "A practical, step-by-step guide for sales managers on how to create an accurate sales forecast in minutes using pipeline stages, probabilities, and historical data.";
 const URL = "https://fiveminforecast.lovable.app/blog/how-to-create-a-sales-forecast";
@@ -18,6 +18,26 @@ export const Route = createFileRoute("/blog/how-to-create-a-sales-forecast")({
       { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "How to Create a Sales Forecast: Step-by-Step Guide for Sales Managers",
+          description: DESCRIPTION,
+          datePublished: "2025-01-15",
+          dateModified: "2025-01-15",
+          author: { "@type": "Organization", name: "Five Minute Forecast" },
+          publisher: {
+            "@type": "Organization",
+            name: "Five Minute Forecast",
+            url: "https://fiveminforecast.lovable.app",
+          },
+          mainEntityOfPage: URL,
+        }),
+      },
+    ],
   }),
   component: SalesForecastGuide,
 });

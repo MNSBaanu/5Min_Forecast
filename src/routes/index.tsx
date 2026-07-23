@@ -43,6 +43,11 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:image", content: HERO_IMAGE },
       { name: "twitter:image", content: HERO_IMAGE },
+      { property: "og:url", content: "https://fiveminforecast.lovable.app/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://fiveminforecast.lovable.app/" },
+      { rel: "preload", as: "image", href: HERO_IMAGE, fetchpriority: "high" },
     ],
   }),
   component: LandingPage,
@@ -172,6 +177,9 @@ function LandingPage() {
                   alt="5Min Forecast pipeline board showing deals organized into sales stages"
                   className="w-full"
                   loading="eager"
+                  fetchPriority="high"
+                  width={1600}
+                  height={1000}
                 />
               </div>
             </Reveal>
