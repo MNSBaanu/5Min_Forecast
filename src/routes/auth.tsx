@@ -27,7 +27,6 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Sign in — 5Min Forecast" },
       { name: "description", content: "Sign in to 5Min Forecast to manage your pipeline and forecasts." },
-      { name: "robots", content: "noindex" },
     ],
   }),
   component: AuthPage,
