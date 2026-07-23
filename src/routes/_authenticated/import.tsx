@@ -270,6 +270,7 @@ function ImportPage() {
           expected_close_date: parseDate(r.closeDate),
           owner: r.owner || userRes.user.email || "Unassigned",
           created_by: userRes.user.id,
+          owner_user_id: userRes.user.id,
         };
       });
 
