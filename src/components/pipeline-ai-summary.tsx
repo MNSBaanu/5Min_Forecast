@@ -25,7 +25,7 @@ function buildPayload(
   const compact: DealSummaryInput[] = deals.map((d) => {
     const updatedAtMs = new Date(d.updatedAt).getTime();
     const closeMs = new Date(d.closeDate).getTime();
-    const notes = [...d.notes]
+    const notes = [...(d.notes ?? [])]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3)
       .map((n) => ({
