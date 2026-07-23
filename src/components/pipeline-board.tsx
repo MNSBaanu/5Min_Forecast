@@ -242,10 +242,6 @@ export function PipelineBoard() {
       />
     </>
   );
-
-  function renderColumns() {
-    return null;
-  }
 }
 
 function StageColumn({
@@ -277,7 +273,7 @@ function StageColumn({
       </div>
       <div className="flex flex-col gap-2">
         {deals.map((deal) => (
-          <DraggableDeal key={deal.id} deal={deal} />
+          <DraggableDeal key={deal.id} deal={deal} onOpen={onOpen} />
         ))}
         {deals.length === 0 && (
           <div className="rounded-md border border-dashed p-4 text-center text-xs text-muted-foreground">
@@ -289,8 +285,27 @@ function StageColumn({
   );
 }
 
-function DraggableDeal({ deal }: { deal: Deal }) {
-  return <DraggableDealInner deal={deal} />;
+function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: (id: string) => void }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal.id });
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      onClick={() => onOpen(deal.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen(deal.id);
+        }
+      }}
+      className={cn("touch-none focus:outline-none", isDragging && "opacity-40")}
+    >
+      <DealCard deal={deal} />
+    </div>
+  );
 }
 
 function DealCard({ deal, dragging = false }: { deal: Deal; dragging?: boolean }) {
