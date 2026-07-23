@@ -143,9 +143,17 @@ function RootComponent() {
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-              <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
-                <SidebarTrigger />
+              <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border/60 bg-background/80 px-6 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+                <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
                 <Separator orientation="vertical" className="h-6" />
+                <div className="hidden sm:block">
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                    5Min Forecast
+                  </p>
+                  <p className="font-display text-sm font-semibold text-foreground">
+                    Sales workspace
+                  </p>
+                </div>
                 <div className="flex-1" />
                 <AuthMenu />
               </header>
