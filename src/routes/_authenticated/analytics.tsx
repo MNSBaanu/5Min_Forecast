@@ -15,6 +15,8 @@ import {
   type StageId,
   type Deal,
 } from "@/hooks/use-deals";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { PipelineAiSummary } from "@/components/pipeline-ai-summary";
 
 export const Route = createFileRoute("/_authenticated/analytics")({
   head: () => ({
@@ -56,6 +58,7 @@ function relative(iso: string) {
 
 function AnalyticsPage() {
   const { deals, activity } = useDeals();
+  const { isManager } = useCurrentUser();
   const [probabilities, setProbabilities] = useState(() => loadStageProbabilities());
   useEffect(() => {
     const onStorage = () => setProbabilities(loadStageProbabilities());
@@ -205,6 +208,13 @@ function AnalyticsPage() {
         <StaleDealsCard deals={staleDeals} />
         <ActivityFeedCard activity={recentActivity} />
       </div>
+
+      {isManager && (
+        <section aria-labelledby="ai-summary">
+          <h2 id="ai-summary" className="sr-only">AI pipeline summary</h2>
+          <PipelineAiSummary deals={filtered} probabilities={probabilities} monthLabel={monthLabel} />
+        </section>
+      )}
     </div>
   );
 }
