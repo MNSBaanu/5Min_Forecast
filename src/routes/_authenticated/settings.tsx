@@ -24,7 +24,7 @@ const DEFAULTS: Probabilities = STAGES.reduce((acc, s) => {
   return acc;
 }, {} as Probabilities);
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Manager Settings — Five Minute Forecast" },

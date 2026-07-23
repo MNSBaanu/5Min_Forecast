@@ -16,7 +16,7 @@ import {
   type Deal,
 } from "@/hooks/use-deals";
 
-export const Route = createFileRoute("/analytics")({
+export const Route = createFileRoute("/_authenticated/analytics")({
   head: () => ({
     meta: [
       { title: "Analytics — Five Minute Forecast" },

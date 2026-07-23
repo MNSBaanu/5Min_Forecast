@@ -27,7 +27,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { STAGE_META, type StageId } from "@/hooks/use-deals";
 import { useContacts } from "@/hooks/use-contacts";
 
-export const Route = createFileRoute("/import")({
+export const Route = createFileRoute("/_authenticated/import")({
   head: () => ({
     meta: [
       { title: "CSV Import — Five Minute Forecast" },
