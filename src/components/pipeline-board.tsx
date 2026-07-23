@@ -10,7 +10,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { Building2, CalendarDays, User } from "lucide-react";
+import { Building2, CalendarDays, User, Send } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,23 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/lib/utils";
 
 type StageId =
@@ -34,6 +51,13 @@ type StageId =
   | "closed_won"
   | "closed_lost";
 
+type Note = {
+  id: string;
+  author: string;
+  createdAt: string; // ISO
+  body: string;
+};
+
 type Deal = {
   id: string;
   company: string;
@@ -43,6 +67,7 @@ type Deal = {
   owner: string;
   stage: StageId;
   lossReason?: string;
+  notes?: Note[];
 };
 
 const STAGES: { id: StageId; label: string; accent: string }[] = [
@@ -67,12 +92,16 @@ const INITIAL_DEALS: Deal[] = [
 
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
+const dateTimeFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+
+const OWNERS = ["Alex Morgan", "Priya Shah", "Diego Ruiz", "Sam Chen"];
 
 export function PipelineBoard() {
   const [deals, setDeals] = useState<Deal[]>(INITIAL_DEALS);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pendingLoss, setPendingLoss] = useState<{ dealId: string } | null>(null);
   const [lossReason, setLossReason] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -87,6 +116,17 @@ export function PipelineBoard() {
   }, [deals]);
 
   const activeDeal = activeId ? deals.find((d) => d.id === activeId) ?? null : null;
+  const selectedDeal = selectedId ? deals.find((d) => d.id === selectedId) ?? null : null;
+
+  function updateDeal(id: string, patch: Partial<Deal>) {
+    setDeals((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
+  }
+
+  function addNote(id: string, note: Note) {
+    setDeals((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, notes: [note, ...(d.notes ?? [])] } : d)),
+    );
+  }
 
   if (!mounted) {
     return (
@@ -190,8 +230,22 @@ export function PipelineBoard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DealPanel
+        deal={selectedDeal}
+        open={selectedDeal !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedId(null);
+        }}
+        onUpdate={updateDeal}
+        onAddNote={addNote}
+      />
     </>
   );
+
+  function renderColumns() {
+    return null;
+  }
 }
 
 function StageColumn({
@@ -236,17 +290,7 @@ function StageColumn({
 }
 
 function DraggableDeal({ deal }: { deal: Deal }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal.id });
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={cn("touch-none", isDragging && "opacity-40")}
-    >
-      <DealCard deal={deal} />
-    </div>
-  );
+  return <DraggableDealInner deal={deal} />;
 }
 
 function DealCard({ deal, dragging = false }: { deal: Deal; dragging?: boolean }) {
