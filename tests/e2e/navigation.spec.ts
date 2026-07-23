@@ -7,7 +7,7 @@ test.describe("authenticated navigation (sales rep)", () => {
   });
 
   const pages: Array<{ path: string; heading: RegExp }> = [
-    { path: "/", heading: /pipeline/i },
+    { path: "/pipeline", heading: /pipeline/i },
     { path: "/analytics", heading: /analytics|forecast|pipeline/i },
     { path: "/contacts", heading: /contacts|people|companies/i },
     { path: "/import", heading: /import|upload|csv/i },
