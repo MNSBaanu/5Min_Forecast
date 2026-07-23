@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  BarChart3,
   Check,
-  Kanban,
-  LineChart,
-  ShieldCheck,
-  Sparkles,
-  Upload,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
